@@ -17,13 +17,13 @@ namespace GroupFlightProject.Data
 
         public List<Flight> FindFlights(string departureLocation, string destination, string day)
         {
-            return flights.Where (f => f.DepartureLocation.Equals(departureLocation, StringComparison.OrdinalIgnoreCase) && 
-            f.Destination.Equals(destination, StringComparison.OrdinalIgnoreCase) &&    
+            return flights.Where(f => f.DepartureLocation.Equals(departureLocation, StringComparison.OrdinalIgnoreCase) &&
+            f.Destination.Equals(destination, StringComparison.OrdinalIgnoreCase) &&
             f.Day.Equals(day, StringComparison.OrdinalIgnoreCase))
             .ToList();
         }
 
-        public Reservation MakeReservation (Flight pickedFlight, string name, string citizenship)
+        public Reservation MakeReservation(Flight pickedFlight, string name, string citizenship)
         {
             if (pickedFlight == null || string.IsNullOrEmpty(name) || string.IsNullOrEmpty(citizenship))
             {
@@ -46,13 +46,33 @@ namespace GroupFlightProject.Data
                 //save reservation method
                 return newReservation;
             }
-            
+
             else
             {
                 throw new InvalidOperationException("No more seats availible.");
             }
         }
 
-        //
+        private string GenerateReservationCode()
+        {
+            // implement reservation code logic
+            return "code";
+        }
+
+        private long CalculateCost()
+        {
+            // implement cost calculation logic. remember to $format
+            return 0;
+        }
+
+        /*private void SaveReservation(Reservation reservation)
+        {
+            METHOD FOR SAVING RESERVATIONS
+        }*/
+
+        /*private void ModifyReservation(Reservation reservation)
+        {
+            METHOD FOR MODIFYING RESERVATIONS
+        }*/
     }
 }
