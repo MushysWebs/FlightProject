@@ -1,7 +1,14 @@
-﻿@page "/findflights"
+﻿@page "/flights"
 
 <div class="container">
-    <h3>Flight Finder</h3>
+
+    <style>
+        h2 {text-align: center;}
+    </style>
+
+
+    <h2>Flight Finder</h2>
+
 
     <EditForm Model="@flightSearchCriteria" OnValidSubmit="@HandleValidSubmit">
         <DataAnnotationsValidator />
@@ -34,26 +41,22 @@
 
 
 <style>
-    .container {
-        width: 70%; 
-        margin: 0 auto;
-        padding: 20px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    }
 
     .flex-container {
         display: flex;
         justify-content: space-between;
         align-items: center;
         gap: 20px;
+        width: 100%;
     }
 
     .input-group {
         margin-bottom: 10px;
         flex: 1; 
+        display: flex;
     }
 
-    .input-field {
+    .input-field, .btn {
         width: 100%; 
         padding: 8px;
         box-sizing: border-box;
@@ -61,16 +64,15 @@
 
     .btn {
         flex: 1; 
-        padding: 10px;
         background-color: #007BFF;
         color: white;
         border: none;
         cursor: pointer;
     }
 
-        .btn:hover {
-            background-color: #0056b3;
-        }
+    .btn:hover {
+        background-color: #0056b3;
+    }
 
 </style>
 
