@@ -1,0 +1,121 @@
+﻿@page "/flightsTest"
+@using GroupFlightProject.Data
+@using System.Text
+
+<h2>Flight Finder</h2>
+
+    <div class="flex-container">
+
+        <div class="input-group">
+            <label for="from">From:</label>
+                <input class="input-field" @bind="from" />
+        </div>
+
+        <div class="input-group">
+            <label for="to">To:</label>
+                <input class="input-field" @bind="to" />
+        </div>
+
+        <div class="input-group">
+            <label for="day">Day:</label>
+                <input class="input-field" @bind="day" />
+        </div>
+
+        <button type="submit" class="btn" @onclick="SearchFlights">Find flights</button> 
+
+    </div>
+    <div class="flex-container">
+        <h2>Flights</h2>
+        <textarea class="input-field" readonly>@flightsText</textarea>
+    </div>
+
+
+
+<style>
+
+    h2 {text-align: center;}
+
+    .flex-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        width: 100%;
+    }
+
+    .input-group {
+        margin-bottom: 10px;
+        flex: 1; 
+        display: flex;
+    }
+
+    .input-field, .btn {
+        width: 100%; 
+        padding: 8px;
+        box-sizing: border-box;
+    }
+
+    .btn {
+        flex: 1; 
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
+    }
+
+</style>
+
+@code {
+    private List<Flight> flights;
+    private string to;
+    private string from;
+    private string day;
+
+    private Services services;
+    private string flightsText;
+
+    protected override void OnInitialized()
+    {
+        services = new Services(); 
+        base.OnInitialized();
+    }
+
+    private void SearchFlights()
+    {
+        var foundFlights = services.FindFlights(to, from, day);
+        flightsText = FormatFlights(foundFlights);
+    }
+
+    private string FormatFlights(List<Flight> flights)
+    {
+        StringBuilder sb = new StringBuilder();
+
+        foreach (var flight in flights)
+        {
+            sb.AppendLine($"{flight.FlightCode}");
+            sb.AppendLine($"{flight.Airline}");
+            sb.AppendLine();
+        }
+        return sb.ToString();
+    }
+
+
+
+
+       /*TEST
+    private void SearchFlights()
+    {
+        if (!string.IsNullOrEmpty(to) && !string.IsNullOrEmpty(from) && !string.IsNullOrEmpty(day))
+        {
+            flightsText = "Received";
+        }
+        else
+        {
+            flightsText = "Please fill in all fields";
+        }
+    } */
+}
