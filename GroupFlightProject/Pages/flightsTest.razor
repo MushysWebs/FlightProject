@@ -78,10 +78,11 @@
     private Services services;
     private string flightsText;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        services = new Services(); 
-        base.OnInitialized();
+        services = new Services();
+        await services.InitializeAsync();
+        await base.OnInitializedAsync();
     }
 
     private void SearchFlights()
