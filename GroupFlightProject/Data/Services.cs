@@ -4,44 +4,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/*                                              REMOVE THIS .CS FILE AND INCORPORATE LOGIC INTO THE .RAZOR FILES
 namespace GroupFlightProject.Data
 {
-	
-	public class Services
+
+    public class Services
     {
-        private List<Flight> flights;
-		private FlightCsvLoader flightLoader;
-		public Services()
-		{
-			flightLoader = new FlightCsvLoader();
-			LoadFlightsAsync();
-		}
 
-		internal class FlightCsvLoader
-		{
-			public List<Flight> LoadFlightsFromCsv(string csvContents)
-			{
-				var flights = new List<Flight>();
-				return flights;
-			}
-		}
-
-		private async Task LoadFlightsAsync()
-		{
-			using var stream = await FileSystem.OpenAppPackageFileAsync("flights.csv");
-			using var reader = new StreamReader(stream);
-
-			var csvContents = await reader.ReadToEndAsync();
-
-			flights = flightLoader.LoadFlightsFromCsv(csvContents);
-		}
-
-		public List<Flight> FindFlights(string departureLocation, string destination, string day)
+        public List<Flight> FindFlights(string departureLocation, string destination, string day)
         {
-            return flights.Where(f => f.DepartureLocation.Equals(departureLocation, StringComparison.OrdinalIgnoreCase) &&
-            f.Destination.Equals(destination, StringComparison.OrdinalIgnoreCase) &&
-            f.Day.Equals(day, StringComparison.OrdinalIgnoreCase))
-            .ToList();
+            try
+            {
+                if (flights == null || !flights.Any())
+                {
+                    Console.WriteLine("Error: No flights available.");
+                    return new List<Flight>(); // Return an empty list or handle the situation as needed
+                }
+
+                return flights.Where(f => f.DepartureLocation.Equals(departureLocation, StringComparison.OrdinalIgnoreCase) &&
+                    f.Destination.Equals(destination, StringComparison.OrdinalIgnoreCase) &&
+                    f.Day.Equals(day, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error finding flights: {ex.Message}");
+                // Handle the exception or log the error
+                return new List<Flight>(); // Return an empty list or handle the situation as needed
+            }
         }
 
         public Reservation MakeReservation(Flight pickedFlight, string name, string citizenship)
@@ -94,41 +84,6 @@ namespace GroupFlightProject.Data
         /*private void ModifyReservation(Reservation reservation)
         {
             METHOD FOR MODIFYING RESERVATIONS
-        }*/
+        }
     }
-	internal class FlightCsvLoader
-	{
-		public List<Flight> LoadFlightsFromCsv(string csvContents)
-		{
-			var flights = new List<Flight>();
-
-			string[] lines = csvContents.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
-
-			foreach (string line in lines)
-			{
-				var values = line.Split(',');
-
-				if (values.Length >= 8)
-				{
-					Flight newFlight = new Flight
-					{
-						FlightCode = values[0],
-						Airline = values[1],
-						DepartureLocation = values[2],
-						Destination = values[3],
-						Day = values[4],
-						Time = values[5],
-						AvailableSeats = int.Parse(values[6]),
-						FlightNumber = int.Parse(values[7])
-					};
-
-					flights.Add(newFlight);
-				}
-			}
-
-			return flights;
-		}
-	}
-}
-
-
+}*/

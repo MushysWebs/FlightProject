@@ -16,12 +16,10 @@ public static class MauiProgram
 			});
 
 		builder.Services.AddMauiBlazorWebView();
-		#if DEBUG
-		builder.Services.AddBlazorWebViewDeveloperTools();
+#if DEBUG
+        builder.Services.AddBlazorWebViewDeveloperTools();
 #endif
-		
-		builder.Services.AddSingleton<FlightCsvLoader>();
 
-		return builder.Build();
-	}
+        return builder.Build();
+    }
 }

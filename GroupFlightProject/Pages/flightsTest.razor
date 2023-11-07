@@ -1,0 +1,123 @@
+﻿@page "/flightsTest"
+@using System.IO
+
+
+<h2>Flight Finder</h2>
+
+<div class="flex-container">
+
+    <div class="input-group">
+        <label for="from">From:</label>
+        <input class="input-field" @bind="from" />
+    </div>
+
+    <div class="input-group">
+        <label for="to">To:</label>
+        <input class="input-field" @bind="to" />
+    </div>
+
+    <div class="input-group">
+        <label for="day">Day:</label>
+        <input class="input-field" @bind="day" />
+    </div>
+
+    <button type="submit" class="btn" @onclick="SearchFlights">Find flights</button>
+
+</div>
+<div class="flex-container">
+    <h2>Flights</h2>
+    <textarea class="input-field" readonly>@flightsText</textarea>
+</div>
+
+
+
+<style>
+
+    h2 {
+        text-align: center;
+    }
+
+    .flex-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        width: 100%;
+    }
+
+    .input-group {
+        margin-bottom: 10px;
+        flex: 1;
+        display: flex;
+    }
+
+    .input-field, .btn {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+    }
+
+    .btn {
+        flex: 1;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+</style>
+
+@code {
+    public string from { get; set; }
+    public string to { get; set; }
+    public string day { get; set; }
+    public string flightsText { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFlights();
+    }
+
+    private async Task LoadFlights()
+    {
+        try
+        {
+            using var stream = await FileSystem.OpenAppPackageFileAsync("flights.csv");
+            using var reader = new StreamReader(stream);
+
+            var flights = await reader.ReadToEndAsync();
+            var flightsArray = flights.Split('\n');
+        }
+        catch (FileNotFoundException ex)
+        {
+            flightsText = "Flights file not found.";
+        }
+    }
+
+    private async Task SearchFlights()
+    {
+        try
+        {
+            using var stream = await FileSystem.OpenAppPackageFileAsync("flights.csv");
+            using var reader = new StreamReader(stream);
+
+            var flights = await reader.ReadToEndAsync();
+            var flightsArray = flights.Split('\n');
+
+            var filteredFlights = flightsArray
+                .Where(flight =>
+                    flight.Contains(from) && flight.Contains(to) && flight.Contains(day))
+                .ToList();
+
+            flightsText = string.Join("\n", filteredFlights);
+        }
+        catch (FileNotFoundException ex)
+        {
+            flightsText = "Flights file not found.";
+        }
+    }
+}
