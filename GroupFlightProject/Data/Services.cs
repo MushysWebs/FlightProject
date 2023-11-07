@@ -4,43 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
+/*                                              REMOVE THIS .CS FILE AND INCORPORATE LOGIC INTO THE .RAZOR FILES
 namespace GroupFlightProject.Data
 {
 
     public class Services
     {
-        private List<Flight> flights;
-        private FlightCsvLoader flightLoader;
-        public Services()
-        {
-            flightLoader = new FlightCsvLoader();
-            LoadFlightsAsync();
-        }
-        public async Task InitializeAsync()
-        {
-            await LoadFlightsAsync();
-        }
-        private async Task LoadFlightsAsync()
-        {
-            try
-            {
-                using var stream = await FileSystem.OpenAppPackageFileAsync("flights.csv");
-                using var reader = new StreamReader(stream);
-                var csvContents = await reader.ReadToEndAsync();
-                flights = flightLoader.LoadFlightsFromCsv(csvContents);
-            }
-            catch (FileNotFoundException ex)
-            {
-                Console.WriteLine("Error: flights.csv not found.");
-                // Handle the file not found error
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error loading flights: {ex.Message}");
-                // Handle other exceptions
-            }
-        }
 
         public List<Flight> FindFlights(string departureLocation, string destination, string day)
         {
@@ -115,41 +84,6 @@ namespace GroupFlightProject.Data
         /*private void ModifyReservation(Reservation reservation)
         {
             METHOD FOR MODIFYING RESERVATIONS
-        }*/
-    }
-
-    internal class FlightCsvLoader
-    {
-        public List<Flight> LoadFlightsFromCsv(string csvContents)
-        {
-            var flights = new List<Flight>();
-
-            string[] lines = csvContents.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
-
-            foreach (string line in lines)
-            {
-                var values = line.Split(',');
-
-                if (values.Length >= 8)
-                {
-                    Flight newFlight = new Flight
-                    {
-                        FlightCode = values[0],
-                        Airline = values[1],
-                        DepartureLocation = values[2],
-                        Destination = values[3],
-                        Day = values[4],
-                        Time = values[5],
-                        AvailableSeats = int.Parse(values[6]),
-                        FlightNumber = int.Parse(values[7])
-                    };
-
-                    flights.Add(newFlight);
-                }
-            }
-
-            return flights;
         }
     }
-}
-
+}*/

@@ -1,39 +1,41 @@
 ﻿@page "/flightsTest"
-@using GroupFlightProject.Data
-@using System.Text
+@using System.IO
+
 
 <h2>Flight Finder</h2>
 
-    <div class="flex-container">
+<div class="flex-container">
 
-        <div class="input-group">
-            <label for="from">From:</label>
-                <input class="input-field" @bind="from" />
-        </div>
-
-        <div class="input-group">
-            <label for="to">To:</label>
-                <input class="input-field" @bind="to" />
-        </div>
-
-        <div class="input-group">
-            <label for="day">Day:</label>
-                <input class="input-field" @bind="day" />
-        </div>
-
-        <button type="submit" class="btn" @onclick="SearchFlights">Find flights</button> 
-
+    <div class="input-group">
+        <label for="from">From:</label>
+        <input class="input-field" @bind="from" />
     </div>
-    <div class="flex-container">
-        <h2>Flights</h2>
-        <textarea class="input-field" readonly>@flightsText</textarea>
+
+    <div class="input-group">
+        <label for="to">To:</label>
+        <input class="input-field" @bind="to" />
     </div>
+
+    <div class="input-group">
+        <label for="day">Day:</label>
+        <input class="input-field" @bind="day" />
+    </div>
+
+    <button type="submit" class="btn" @onclick="SearchFlights">Find flights</button>
+
+</div>
+<div class="flex-container">
+    <h2>Flights</h2>
+    <textarea class="input-field" readonly>@flightsText</textarea>
+</div>
 
 
 
 <style>
 
-    h2 {text-align: center;}
+    h2 {
+        text-align: center;
+    }
 
     .flex-container {
         display: flex;
@@ -45,78 +47,77 @@
 
     .input-group {
         margin-bottom: 10px;
-        flex: 1; 
+        flex: 1;
         display: flex;
     }
 
     .input-field, .btn {
-        width: 100%; 
+        width: 100%;
         padding: 8px;
         box-sizing: border-box;
     }
 
     .btn {
-        flex: 1; 
+        flex: 1;
         background-color: #007BFF;
         color: white;
         border: none;
         cursor: pointer;
     }
 
-    .btn:hover {
-        background-color: #0056b3;
-    }
+        .btn:hover {
+            background-color: #0056b3;
+        }
 
 </style>
 
 @code {
-    private List<Flight> flights;
-    private string to;
-    private string from;
-    private string day;
-
-    private Services services;
-    private string flightsText;
+    public string from { get; set; }
+    public string to { get; set; }
+    public string day { get; set; }
+    public string flightsText { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        services = new Services();
-        await services.InitializeAsync();
-        await base.OnInitializedAsync();
+        await LoadFlights();
     }
 
-    private void SearchFlights()
+    private async Task LoadFlights()
     {
-        var foundFlights = services.FindFlights(to, from, day);
-        flightsText = FormatFlights(foundFlights);
+        try
+        {
+            using var stream = await FileSystem.OpenAppPackageFileAsync("flights.csv");
+            using var reader = new StreamReader(stream);
+
+            var flights = await reader.ReadToEndAsync();
+            var flightsArray = flights.Split('\n');
+        }
+        catch (FileNotFoundException ex)
+        {
+            flightsText = "Flights file not found.";
+        }
     }
 
-    private string FormatFlights(List<Flight> flights)
+    private async Task SearchFlights()
     {
-        StringBuilder sb = new StringBuilder();
-
-        foreach (var flight in flights)
+        try
         {
-            sb.AppendLine($"{flight.FlightCode}");
-            sb.AppendLine($"{flight.Airline}");
-            sb.AppendLine();
+            using var stream = await FileSystem.OpenAppPackageFileAsync("flights.csv");
+            using var reader = new StreamReader(stream);
+
+            var flights = await reader.ReadToEndAsync();
+            var flightsArray = flights.Split('\n');
+
+            var filteredFlights = flightsArray
+                .Where(flight =>
+                    flight.Contains(from) && flight.Contains(to) && flight.Contains(day))
+                .ToList();
+
+            flightsText = string.Join("\n", filteredFlights);
         }
-        return sb.ToString();
+        catch (FileNotFoundException ex)
+        {
+            flightsText = "Flights file not found.";
+        }
     }
-
-
-
-
-       /*TEST
-    private void SearchFlights()
-    {
-        if (!string.IsNullOrEmpty(to) && !string.IsNullOrEmpty(from) && !string.IsNullOrEmpty(day))
-        {
-            flightsText = "Received";
-        }
-        else
-        {
-            flightsText = "Please fill in all fields";
-        }
-    } */
 }
