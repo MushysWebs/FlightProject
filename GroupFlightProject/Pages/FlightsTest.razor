@@ -125,6 +125,7 @@
     public string to { get; set; }
     public string day { get; set; }
     public string flightsText { get; set; }
+    public int numberOfSeats { get; set; }
 
     public string reservedFlight { get; set; } //FOR DEBUGGING PURPOSES... TO SEE IF FLIGHT IS FOUND
 
@@ -170,21 +171,24 @@
             var flightsArray = flights.Split('\n');
 
             var filteredFlights = flightsArray
-                .Where(flight =>
-                {
-                    var elements = flight.Split(',');
-                    return elements.Length >= 5 &&
-                        elements[2].Trim().Equals(from, StringComparison.OrdinalIgnoreCase) &&
-                        elements[3].Trim().Equals(to, StringComparison.OrdinalIgnoreCase) &&
-                        elements[4].Trim().Equals(day, StringComparison.OrdinalIgnoreCase);
-                })
-                .Select(flight =>
-                {
-                    //removing the seat number from displaying
-                    var elements = flight.Split(',');
-                    return string.Join(",", elements.Take(elements.Length - 2)) + "," + elements.Last();
-                })
-                .ToList();
+               .Where(flight =>
+               {
+                   var elements = flight.Split(',');
+                   return elements.Length >= 7 &&
+                       elements[2].Trim().Equals(from, StringComparison.OrdinalIgnoreCase) &&
+                       elements[3].Trim().Equals(to, StringComparison.OrdinalIgnoreCase) &&
+                       elements[4].Trim().Equals(day, StringComparison.OrdinalIgnoreCase);
+
+
+               })
+               .Select(flight =>
+               {
+                   // removing the seat number from displaying
+                   var elements = flight.Split(',');
+                   return string.Join(",", elements.Take(elements.Length - 1).SkipLast(1)) + "," + elements.Last();
+               })
+               .ToList();
+
 
             flightsText = string.Join("\n", filteredFlights);
         }
@@ -214,6 +218,14 @@
             {
                 var elements = matchingFlight.Split(',');
                 reservedFlight = $"Reserved Flight: {string.Join(",", elements.Take(elements.Length - 2))}";
+                if (int.TryParse(elements[6], out var seats) && seats > 175)
+                {
+                    // seats = seats - 1
+                }
+                else
+                {
+                    reservedFlight = "There are no seats available";
+                }
 
             }
             else
@@ -242,6 +254,7 @@
         {
             reservedFlight = "The citizenship field is empty";
         }
+
     }
 
 
