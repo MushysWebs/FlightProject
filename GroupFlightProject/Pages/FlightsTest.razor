@@ -1,5 +1,6 @@
 ﻿@page "/flightsTest"
 @using System.IO
+@using System.Diagnostics;
 
 
 <h2>Flight Finder</h2>
@@ -121,6 +122,22 @@
 </style>
 
 @code {
+        [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
+        public class Reservation
+    {
+        public string ReservationCode { get; set; }
+        public string FlightCode { get; set; }
+        public string Airline { get; set; }
+        public string Cost { get; set; }
+        public string Name { get; set; }
+        public string Citizenship { get; set; }
+        public bool IsActive { get; set; }
+
+        private string GetDebuggerDisplay()
+        {
+            return ToString();
+        }
+    }
     public string from { get; set; }
     public string to { get; set; }
     public string day { get; set; }
@@ -223,7 +240,7 @@
             {
                 var elements = matchingFlight.Split(',');
                 reservedFlight = $"Reserved Flight: {string.Join(",", elements.Take(elements.Length - 2))}";
-                if (int.TryParse(elements[6], out var seats) && seats > 175)
+                if (int.TryParse(elements[6], out var seats) && seats > 0)
                 {
                     // seats = seats - 1
                 }
@@ -258,6 +275,18 @@
         else if (string.IsNullOrEmpty(reserveCitizenship))
         {
             reservedFlight = "The citizenship field is empty";
+        }
+
+    }
+    private async Task SaveToCsv(Reservation reservation)
+    {
+        var csvLine = $"{reservation.FlightCode},{reservation.Airline},{reservation.Day},{reservation.Time},{reservation.Cost},{reservation.Name},{reservation.Citizenship}\n";
+
+        var filePath = {//file path"}
+
+    using (StreamWriter file = new StreamWriter(/*fle path*/, append: true))
+        {
+            await file.WriteAsync(csvLine;
         }
     }
 
