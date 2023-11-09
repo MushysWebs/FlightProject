@@ -209,11 +209,12 @@
                 elements[7].Trim().Equals(reserveCost, StringComparison.OrdinalIgnoreCase);
             });
 
- //DEBUGGING FIELD. NOT NEEDED FOR FINAL PRODUCT.
+            //DEBUGGING FIELD. NOT NEEDED FOR FINAL PRODUCT.
             if (matchingFlight != null)
             {
                 var elements = matchingFlight.Split(',');
                 reservedFlight = $"Reserved Flight: {string.Join(",", elements.Take(elements.Length - 2))}";
+
             }
             else
             {
@@ -224,6 +225,27 @@
         {
             reservedFlight = "Error while reserving the flight.";
         }
-//DEBUGGING FIELD. NOT NEEDED FOR FINAL PRODUCT.
+        //DEBUGGING FIELD. NOT NEEDED FOR FINAL PRODUCT.
+        void errorHandling()
+        {
+            reservedFlight = "";
+        }
+        if (string.IsNullOrEmpty(reserveFlightCode))
+        {
+            reservedFlight = "A reservation is to be made but no flight is selected";
+        }
+        else if (string.IsNullOrEmpty(reserveName))
+        {
+            reservedFlight = "The name field is empty";
+        }
+        else if (string.IsNullOrEmpty(reserveCitizenship))
+        {
+            reservedFlight = "The citizenship field is empty";
+        }
     }
+
+
 }
+
+
+
