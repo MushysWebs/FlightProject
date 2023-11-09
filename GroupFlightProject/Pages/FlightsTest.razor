@@ -178,15 +178,23 @@
                         elements[3].Trim().Equals(to, StringComparison.OrdinalIgnoreCase) &&
                         elements[4].Trim().Equals(day, StringComparison.OrdinalIgnoreCase);
                 })
-                .Select(flight =>
-                {
-                    //removing the seat number from displaying
-                    var elements = flight.Split(',');
-                    return string.Join(",", elements.Take(elements.Length - 2)) + "," + elements.Last();
-                })
-                .ToList();
 
-            flightsText = string.Join("\n", filteredFlights);
+            .Select(flight => flight.Split(','))
+
+            .ToList();
+
+            if (filteredFlights.Count > 0)
+            {
+                var selectedFlight = filteredFlights.First(); 
+                reserveFlightCode = selectedFlight[0];
+                reserveAirline = selectedFlight[1];
+                reserveDay = selectedFlight[4];
+                reserveTime = selectedFlight[5];
+                reserveCost = selectedFlight[7];
+            }
+
+            flightsText = string.Join("\n", filteredFlights.Select(flight => string.Join(",", flight)));
+
         }
         catch (FileNotFoundException ex)
         {
@@ -203,10 +211,10 @@
                 var elements = flight.Split(',');
                 return elements.Length >= 5 &&
                     elements[0].Trim().Equals(reserveFlightCode, StringComparison.OrdinalIgnoreCase) &&
-                elements[1].Trim().Equals(reserveAirline, StringComparison.OrdinalIgnoreCase) &&
-                elements[4].Trim().Equals(reserveDay, StringComparison.OrdinalIgnoreCase) &&
-                elements[5].Trim().Equals(reserveTime, StringComparison.OrdinalIgnoreCase) &&
-                elements[7].Trim().Equals(reserveCost, StringComparison.OrdinalIgnoreCase);
+                    elements[1].Trim().Equals(reserveAirline, StringComparison.OrdinalIgnoreCase) &&
+                    elements[4].Trim().Equals(reserveDay, StringComparison.OrdinalIgnoreCase) &&
+                    elements[5].Trim().Equals(reserveTime, StringComparison.OrdinalIgnoreCase) &&
+                    elements[7].Trim().Equals(reserveCost, StringComparison.OrdinalIgnoreCase);
             });
 
  //DEBUGGING FIELD. NOT NEEDED FOR FINAL PRODUCT.
