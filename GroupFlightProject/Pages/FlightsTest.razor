@@ -24,6 +24,7 @@
     <button type="submit" class="btn" @onclick="SearchFlights">Find flights</button>
 
 </div>
+
 <div class="flex-container">
     <h2>Flights</h2>
     <textarea class="input-field" readonly>@flightsText</textarea>
@@ -51,6 +52,11 @@
         display: flex;
     }
 
+    .input-field {
+        border: 1px solid #CCCCCC;
+        border-radius: 5px;
+    }
+
     .input-field, .btn {
         width: 100%;
         padding: 8px;
@@ -65,9 +71,9 @@
         cursor: pointer;
     }
 
-        .btn:hover {
-            background-color: #0056b3;
-        }
+    .btn:hover {
+        background-color: #0056b3;
+    }
 
 </style>
 
@@ -110,7 +116,13 @@
 
             var filteredFlights = flightsArray
                 .Where(flight =>
-                    flight.Contains(from) && flight.Contains(to) && flight.Contains(day))
+                {
+                    var elements = flight.Split(',');
+                    return elements.Length >= 5 &&
+                        elements[2].Trim().Equals(from, StringComparison.OrdinalIgnoreCase) &&
+                        elements[3].Trim().Equals(to, StringComparison.OrdinalIgnoreCase) &&
+                        elements[4].Trim().Equals(day, StringComparison.OrdinalIgnoreCase);
+                })
                 .ToList();
 
             flightsText = string.Join("\n", filteredFlights);
