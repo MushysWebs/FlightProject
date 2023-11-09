@@ -37,27 +37,27 @@
 
     <div class="input-group">
         <label for="reserveFlightCode">Flight code:</label>
-        <input class="input-field" @bind="reserveFlightCode" />
+        <input class="input-field" @bind="reserveFlightCode" readonly />
     </div>
 
     <div class="input-group">
         <label for="reserveAirline">Airline:</label>
-        <input class="input-field" @bind="reserveAirline" />
+        <input class="input-field" @bind="reserveAirline" readonly />
     </div>
 
     <div class="input-group">
         <label for="reserveDay">Day:</label>
-        <input class="input-field" @bind="reserveDay" />
+        <input class="input-field" @bind="reserveDay" readonly />
     </div>
 
     <div class="input-group">
         <label for="reserveTime">Time:</label>
-        <input class="input-field" @bind="reserveTime" />
+        <input class="input-field" @bind="reserveTime" readonly />
     </div>
 
     <div class="input-group">
         <label for="reserveCost">Cost:</label>
-        <input class="input-field" @bind="reserveCost" />
+        <input class="input-field" @bind="reserveCost" readonly />
     </div>
 
     <div class="input-group">
@@ -169,7 +169,7 @@
             using var reader = new StreamReader(stream);
 
             var flights = await reader.ReadToEndAsync();
-            flightsArray = flights.Split('\n');
+            flightsArray = flights.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
         }
         catch (FileNotFoundException ex)
         {
@@ -181,12 +181,6 @@
     {
         try
         {
-            using var stream = await FileSystem.OpenAppPackageFileAsync("flights.csv");
-            using var reader = new StreamReader(stream);
-
-            var flights = await reader.ReadToEndAsync();
-            var flightsArray = flights.Split('\n');
-
             var filteredFlights = flightsArray
                 .Where(flight =>
                 {
@@ -195,24 +189,20 @@
                         elements[2].Trim().Equals(from, StringComparison.OrdinalIgnoreCase) &&
                         elements[3].Trim().Equals(to, StringComparison.OrdinalIgnoreCase) &&
                         elements[4].Trim().Equals(day, StringComparison.OrdinalIgnoreCase);
-                })
+                });
 
-            .Select(flight => flight.Split(','))
-
-            .ToList();
-
-            if (filteredFlights.Count > 0)
+            if (filteredFlights.Any())
             {
-                var selectedFlight = filteredFlights.First(); 
-                reserveFlightCode = selectedFlight[0];
-                reserveAirline = selectedFlight[1];
-                reserveDay = selectedFlight[4];
-                reserveTime = selectedFlight[5];
-                reserveCost = selectedFlight[7];
+                var selectedFlight = filteredFlights.First();
+                var elements = selectedFlight.Split(',');
+                reserveFlightCode = elements[0];
+                reserveAirline = elements[1];
+                reserveDay = elements[4];
+                reserveTime = elements[5];
+                reserveCost = elements[7];
             }
 
-            flightsText = string.Join("\n", filteredFlights.Select(flight => string.Join(",", flight)));
-
+            flightsText = string.Join("\n", filteredFlights);
         }
         catch (FileNotFoundException ex)
         {
@@ -239,10 +229,18 @@
             if (matchingFlight != null)
             {
                 var elements = matchingFlight.Split(',');
+                var matchingIndex = Array.IndexOf(flightsArray, matchingFlight);
                 reservedFlight = $"Reserved Flight: {string.Join(",", elements.Take(elements.Length - 2))}";
                 if (int.TryParse(elements[6], out var seats) && seats > 0)
                 {
-                    // seats = seats - 1
+                    seats--;
+                    elements[6] = seats.ToString();
+                    flightsArray[matchingIndex] = string.Join(",", elements);
+
+                    // Update the file as shown previously
+                    var updatedFlights = string.Join("\n", flightsArray);
+                    using var streamWriter = new StreamWriter(await FileSystem.OpenAppPackageFileAsync("flights.csv"));
+                    await streamWriter.WriteAsync(updatedFlights);
                 }
                 else
                 {
@@ -257,7 +255,6 @@
         }
         catch (Exception ex)
         {
-            reservedFlight = "Error while reserving the flight.";
         }
         //DEBUGGING FIELD. NOT NEEDED FOR FINAL PRODUCT.
         void errorHandling()
