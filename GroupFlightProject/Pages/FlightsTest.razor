@@ -31,6 +31,45 @@
 </div>
 
 
+<div class="input-row">
+    <h2>Reserve</h2>
+
+    <div class="input-group">
+        <label for="reserveFlightCode">Flight code:</label>
+        <input class="input-field" @bind="reserveFlightCode" />
+    </div>
+
+    <div class="input-group">
+        <label for="reserveAirline">Airline:</label>
+        <input class="input-field" @bind="reserveAirline" />
+    </div>
+
+    <div class="input-group">
+        <label for="reserveDay">Day:</label>
+        <input class="input-field" @bind="reserveDay" />
+    </div>
+
+    <div class="input-group">
+        <label for="reserveTime">Time:</label>
+        <input class="input-field" @bind="reserveTime" />
+    </div>
+
+    <div class="input-group">
+        <label for="reserveCost">Cost:</label>
+        <input class="input-field" @bind="reserveCost" />
+    </div>
+
+    <div class="input-group">
+        <label for="reserveName">Name:</label>
+        <input class="input-field" @bind="reserveName" />
+    </div>
+
+    <div class="input-group">
+        <label for="reserveCost">Cost:</label>
+        <input class="input-field" @bind="reserveCost" />
+    </div>
+</div>
+
 
 <style>
 
@@ -82,6 +121,14 @@
     public string to { get; set; }
     public string day { get; set; }
     public string flightsText { get; set; }
+
+    public string reserveFlightCode { get; set; }
+    public string reserveAirline { get; set; }
+    public string reserveDay { get; set; }
+    public string reserveTime { get; set; }
+    public string reserveCost { get; set; }
+    public string reserveName { get; set; }
+    public string reserveCitizenship { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
