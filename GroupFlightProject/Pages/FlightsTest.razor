@@ -125,6 +125,7 @@
     public string to { get; set; }
     public string day { get; set; }
     public string flightsText { get; set; }
+    public int numberOfSeats { get; set; }
 
     public string reservedFlight { get; set; } //FOR DEBUGGING PURPOSES... TO SEE IF FLIGHT IS FOUND
 
@@ -222,6 +223,14 @@
             {
                 var elements = matchingFlight.Split(',');
                 reservedFlight = $"Reserved Flight: {string.Join(",", elements.Take(elements.Length - 2))}";
+                if (int.TryParse(elements[6], out var seats) && seats > 175)
+                {
+                    // seats = seats - 1
+                }
+                else
+                {
+                    reservedFlight = "There are no seats available";
+                }
 
             }
             else
