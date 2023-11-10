@@ -144,20 +144,28 @@
                 throw new ArgumentException("Passenger name is empty");
             }
         }
-
-        private string GenerateReservationCode()
-        {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            var random = new Random();
-            return new string(Enumerable.Repeat(chars, 6)
-            .Select(s => s[random.Next(s.Length)]).ToArray());
-        }
-
-        public void CreateReservationCode(string code)
-        {
-            ReservationCode = GenerateReservationCode();
-        }
     }
+    public class ReservationManager
+    {
+        public List<Reservation> reservations = new List<Reservation>();
+        //INCORPORATE BINARY FILE MAKING
+    }
+
+    private string GenerateReservationCode()
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        var random = new Random();
+        return new string(Enumerable.Repeat(chars, 6)
+        .Select(s => s[random.Next(s.Length)]).ToArray());
+    }
+    public void CreateReservationCode()
+    {
+        reservationCode = GenerateReservationCode();
+    }
+
+
+    public string reservationCode { get; set; }
+
     public string from { get; set; }
     public string to { get; set; }
     public string day { get; set; }
@@ -175,9 +183,11 @@
     public string reserveCitizenship { get; set; }
 
     private string[] flightsArray;
+    private ReservationManager reservationManager;
 
     protected override async Task OnInitializedAsync()
     {
+        reservationManager = new ReservationManager();
         await LoadFlights();
     }
 
@@ -248,9 +258,10 @@
             //DEBUGGING FIELD. NOT NEEDED FOR FINAL PRODUCT.
             if (matchingFlight != null)
             {
+                CreateReservationCode();
                 var elements = matchingFlight.Split(',');
                 var matchingIndex = Array.IndexOf(flightsArray, matchingFlight);
-                reservedFlight = $"Reserved Flight: {string.Join(",", elements.Take(elements.Length - 2))}";
+                reservedFlight = $"Reserved Flight: {string.Join(",", elements.Take(elements.Length - 2))}, Reservation Code: {reservationCode}";
                 if (int.TryParse(elements[6], out var seats) && seats > 0)
                 {
                     seats--;
@@ -261,6 +272,7 @@
                     var updatedFlights = string.Join("\n", flightsArray);
                     using var streamWriter = new StreamWriter(await FileSystem.OpenAppPackageFileAsync("flights.csv"));
                     await streamWriter.WriteAsync(updatedFlights);
+
                 }
                 else
                 {
@@ -293,10 +305,7 @@
         {
             reservedFlight = "The citizenship field is empty";
         }
-
     }
-
-
 }
 
 
