@@ -44,6 +44,8 @@
 
         <!-- Custom Fonts -->
         <MauiFont Include="Resources\Fonts\*" />
+        <None Remove="Pages\ToDoLIST.txt" />
+        <Compile Include="Pages\ToDoLIST.txt" />
 
         <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
         <MauiAsset Include="Resources\Raw\flights.csv" LogicalName="flights.csv" />
