@@ -122,8 +122,7 @@
 </style>
 
 @code {
-        [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
-        public class Reservation
+    public class Reservation
     {
         public string ReservationCode { get; set; }
         public string FlightCode { get; set; }
@@ -133,9 +132,30 @@
         public string Citizenship { get; set; }
         public bool IsActive { get; set; }
 
-        private string GetDebuggerDisplay()
+        //mutator methods---------------
+        public void SetPassengerName(string name)
         {
-            return ToString();
+            if (!string.IsNullOrEmpty(name))
+            {
+                Name = name;
+            }
+            else
+            {
+                throw new ArgumentException("Passenger name is empty");
+            }
+        }
+
+        private string GenerateReservationCode()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            var random = new Random();
+            return new string(Enumerable.Repeat(chars, 6)
+            .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+        public void CreateReservationCode(string code)
+        {
+            ReservationCode = GenerateReservationCode();
         }
     }
     public string from { get; set; }
@@ -274,17 +294,6 @@
             reservedFlight = "The citizenship field is empty";
         }
 
-    }
-    private async Task SaveToCsv(Reservation reservation)
-    {
-        var csvLine = $"{reservation.FlightCode},{reservation.Airline},{reservation.Day},{reservation.Time},{reservation.Cost},{reservation.Name},{reservation.Citizenship}\n";
-
-        var filePath = {//file path"}
-
-    using (StreamWriter file = new StreamWriter(/*fle path*/, append: true))
-        {
-            await file.WriteAsync(csvLine;
-        }
     }
 
 
