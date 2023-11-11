@@ -1,4 +1,4 @@
-﻿					OOP 2 ASSIGNMENT TO DO LIST
+﻿/*					OOP 2 ASSIGNMENT TO DO LIST
 
 ~~~~~~~~~~~~~~~~~~~~~EASY~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~												PRIORITY					APPROX. TIME
 FLIGHTS PAGE
@@ -20,6 +20,7 @@ FLIGHTS PAGE
 		-implement a method to modify existing reservations	(requires [PREREQ1])						MEDIUM						1 hour
 			-method can update the traveller’s name and citizenship										LOW							10 minutes		
 			-method can delete reservations, marking it inactive and freeing up a seat					LOW							10 minutes
+		-make sure the flight seat gets updated in the CVS file											MEDIUM						1 hour
 
 RESERVATION PAGE
 		-create findReservation method (requires [PREREQ1])												MEDIUM						30 minutes
@@ -30,5 +31,5 @@ RESERVATION PAGE
 FLIGHTS PAGE
 		[PREREQ1]-serialize and save reservation. try storing it as a .json.							HIGH						1.5 hours
 																																	__________
-																																	6+ hours
+																																	6+ hours*/
 																																	

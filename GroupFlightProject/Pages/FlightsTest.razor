@@ -1,6 +1,7 @@
 ﻿@page "/flightsTest"
 @using System.IO
 @using System.Diagnostics;
+@using System.Runtime.Serialization.Formatters.Binary;
 
 
 <h2>Flight Finder</h2>
@@ -147,8 +148,33 @@
     }
     public class ReservationManager
     {
-        public List<Reservation> reservations = new List<Reservation>();
-        //INCORPORATE BINARY FILE MAKING
+        public List<Reservation> Reservations { get; set; } = new List<Reservation>();
+        string filePath = "reservations.save";
+        
+        public void Persist(object data, string filePath)
+        {
+            FileStream fileStream;
+            BinaryFormatter binFormat = new BinaryFormatter();
+            fileStream = File.Create(filePath);
+            binFormat.Serialize(fileStream, data);
+            fileStream.Close();
+
+        }
+
+        public object BinaryDeserialize(string filePath)
+        {
+            object obj = null;
+            FileStream fileStream;
+            BinaryFormatter bf = new BinaryFormatter();
+            if(File.Exists(filePath))
+            {
+                fileStream = File.OpenRead(filePath);
+                obj = bf.Deserialize(fileStream);
+                fileStream.Close();
+            }
+            return obj;
+
+        }
     }
 
     private string GenerateReservationCode()
@@ -261,16 +287,17 @@
                 CreateReservationCode();
                 var elements = matchingFlight.Split(',');
                 var matchingIndex = Array.IndexOf(flightsArray, matchingFlight);
-                reservedFlight = $"Reserved Flight: {string.Join(",", elements.Take(elements.Length - 2))}, Reservation Code: {reservationCode}";
+                reservedFlight = $"Reserved Flight: {string.Join(",", elements.Take(elements.Length - 2))}, Reservation Code: {reservationCode}, {elements[6]}";
                 if (int.TryParse(elements[6], out var seats) && seats > 0)
                 {
                     seats--;
                     elements[6] = seats.ToString();
                     flightsArray[matchingIndex] = string.Join(",", elements);
-
-                    // Update the file as shown previously
+                    //     
+                    using var stream = await FileSystem.OpenAppPackageFileAsync("flights.csv");
+                    //
                     var updatedFlights = string.Join("\n", flightsArray);
-                    using var streamWriter = new StreamWriter(await FileSystem.OpenAppPackageFileAsync("flights.csv"));
+                    using var streamWriter = new StreamWriter(stream);
                     await streamWriter.WriteAsync(updatedFlights);
 
                 }
