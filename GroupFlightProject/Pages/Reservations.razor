@@ -1,0 +1,146 @@
+﻿@page "/reservations"
+
+
+
+<div class="reservation-finder">
+    <h2>Reservation Finder</h2>
+    <div class="filter-group">
+        <div class="input-group">
+            <label for="ReservationCode">Reservation Code</label>
+            <input type="text" id="ReservationCode">
+        </div>
+
+        <div class="input-group">
+            <label for="Airline">Airline</label>
+            <input type="text" id="Airline">
+        </div>
+
+        <div class="input-group">
+            <label for="Name">Name</label>
+            <input type="text" id="Name">
+        </div>
+
+        <button class="find-reservations">Find Reservations</button>
+    </div>
+
+   
+    <div class="reservations">
+        <h3>Reservations</h3>
+        <input type="text" placeholder="Loading...">
+    </div>
+</div>
+
+
+<div class="reservation-form">
+    <h3>Reserve</h3>
+    <form>
+        <div class="input-group">
+            <label for="ReservationCode">Reservation Code</label>
+            <input type="text" id="ReservationCode">
+        </div>
+
+        <div class="input-group">
+            <label for="FlightCode">Flight Code</label>
+            <input type="text" id="FlightCode">
+        </div>
+
+        <div class="input-group">
+            <label for="Airline">Airline</label>
+            <input type="text" id="Airline">
+        </div>
+
+        <div class="input-group">
+            <label for="Cost">Cost</label>
+            <input type="text" id="Cost">
+        </div>
+
+        <div class="input-group">
+            <label for="Name">Name</label>
+            <input type="text" id="Name">
+        </div>
+
+        <div class="input-group">
+            <label for="Citizenship">Citizenship</label>
+            <input type="text" id="Citizenship">
+        </div>
+
+        <div class="input-group">
+            <label for="Status">Status</label>
+            <input type="text" id="Status">
+        </div>
+
+        <div class="save-button-container">
+        <button class="save">Save</button>
+        </div>
+    </form>
+</div>
+
+
+
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+
+
+h2 {
+    text-align: center;
+}
+
+.flex-container,
+.filter-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.input-field {
+        border: 1px solid #CCCCCC;
+        border-radius: 5px;
+}
+
+.find-reservations {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+
+}
+
+
+.find-reservations:hover {
+    background-color: #0056b3;
+}
+
+.reservation-finder,
+.reservation-form {
+    padding: 20px;
+    background-color: white;
+}
+
+.save-button-container {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+}
+
+.save {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px 15px; 
+    width: 300px; 
+}
+
+</style>
