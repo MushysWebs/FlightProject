@@ -2,77 +2,74 @@
 
 
 
-<div class="reservation-finder">
-    <h2>Reservation Finder</h2>
-    <div class="filter-group">
-        <div class="input-group">
-            <label for="ReservationCode">Reservation Code</label>
-            <input type="text" id="ReservationCode">
-        </div>
+<h2>Reservation Finder</h2>
 
-        <div class="input-group">
-            <label for="Airline">Airline</label>
-            <input type="text" id="Airline">
-        </div>
+<div class="Reservations-finder">
 
-        <div class="input-group">
-            <label for="Name">Name</label>
-            <input type="text" id="Name">
-        </div>
-
-        <button class="find-reservations">Find Reservations</button>
+    <div class="input-group">
+        <label for="ReservationCode">Code:</label>
+        <input class="input-field" @bind="reservationCode" />
     </div>
 
-   
-    <div class="reservations">
-        <h3>Reservations</h3>
-        <input type="text" placeholder="Loading...">
+    <div class="input-group">
+        <label for="Airline">Airline:</label>
+        <input class="input-field" @bind="airline" />
     </div>
+
+    <div class="input-group">
+        <label for="Name">Name:</label>
+        <input class="input-field" @bind="passengerName" />
+    </div>
+
+    <button class="btn" @onclick="SearchReservations">Find Reservations</button>
+
 </div>
 
+<div class="flex-container">
+    <h2>Reservations</h2>
+    <textarea class="input-field" readonly>@reservationsText</textarea>
+</div>
 
-<div class="reservation-form">
-    <h3>Reserve</h3>
-    <form>
-        <div class="input-group">
-            <label for="ReservationCode">Reservation Code</label>
-            <input type="text" id="ReservationCode">
-        </div>
+<div class="flex-container">
+    <h2>Reserve</h2>
 
-        <div class="input-group">
-            <label for="FlightCode">Flight Code</label>
-            <input type="text" id="FlightCode">
-        </div>
+    <div class="input-group">
+        <label for="ReservationCode">Reservation Code:</label>
+        <input class="input-field" @bind="reservationCode" />
+    </div>
 
-        <div class="input-group">
-            <label for="Airline">Airline</label>
-            <input type="text" id="Airline">
-        </div>
+    <div class="input-group">
+        <label for="FlightCode">Flight Code:</label>
+        <input class="input-field" @bind="flightCode" readonly />
+    </div>
 
-        <div class="input-group">
-            <label for="Cost">Cost</label>
-            <input type="text" id="Cost">
-        </div>
+    <div class="input-group">
+        <label for="Airline">Airline:</label>
+        <input class="input-field" @bind="airline" readonly />
+    </div>
 
-        <div class="input-group">
-            <label for="Name">Name</label>
-            <input type="text" id="Name">
-        </div>
+    <div class="input-group">
+        <label for="Cost">Cost:</label>
+        <input class="input-field" @bind="cost" readonly />
+    </div>
 
-        <div class="input-group">
-            <label for="Citizenship">Citizenship</label>
-            <input type="text" id="Citizenship">
-        </div>
+    <div class="input-group">
+        <label for="Name">Name:</label>
+        <input class="input-field" @bind="passengerName" />
+    </div>
 
-        <div class="input-group">
-            <label for="Status">Status</label>
-            <input type="text" id="Status">
-        </div>
+    <div class="input-group">
+        <label for="Citizenship">Citizenship:</label>
+        <input class="input-field" @bind="citizenship" />
+    </div>
 
-        <div class="save-button-container">
-        <button class="save">Save</button>
-        </div>
-    </form>
+    <div class="input-group">
+        <label for="Status">Status:</label>
+        <input class="input-field" @bind="status" />
+    </div>
+
+    <button class="save" @onclick="ReserveReservation">Save</button>
+
 </div>
 
 
@@ -83,17 +80,24 @@
     box-sizing: border-box;
 }
 
-
-
 h2 {
     text-align: center;
 }
 
-.flex-container,
-.filter-group {
+
+.Reservations-finder {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        width: 100%;
+}
+
+
+.flex-container {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column; 
+    align-items: stretch; 
     gap: 20px;
 }
 
@@ -104,21 +108,22 @@ h2 {
 }
 
 .input-field {
-        border: 1px solid #CCCCCC;
-        border-radius: 5px;
+    width: 100%; 
+    padding: 8px;
+    border: 1px solid #CCCCCC;
+    border-radius: 5px;
 }
 
-.find-reservations {
-    padding: 10px 20px;
+.btn, .find-reservations {
+    padding: 8px;
     background-color: #007BFF;
     color: white;
     border: none;
     cursor: pointer;
-
+    width: 100%; 
 }
 
-
-.find-reservations:hover {
+.btn:hover, .find-reservations:hover {
     background-color: #0056b3;
 }
 
@@ -134,13 +139,57 @@ h2 {
     align-items: center; 
 }
 
-.save {
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    cursor: pointer;
-    padding: 10px 15px; 
-    width: 300px; 
-}
+    .save {
+        padding: 10px 20px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        cursor: pointer;
+        width: 200px;
+        margin: 0 auto; 
+        border-radius: 5px;
+    }
+
+    .save:hover {
+        background-color: #0056b3;
+    }
 
 </style>
+
+
+@code {
+    public string reservationCode { get; set; }
+    public string airline { get; set; }
+    public string passengerName { get; set; }
+    public string reservationsText { get; set; }
+
+    
+    public string flightCode { get; set; }
+    public string cost { get; set; }
+    public string citizenship { get; set; }
+    public string status { get; set; }
+
+    private string[] reservationsArray;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadReservations();
+    }
+
+    private async Task LoadReservations()
+    {
+        // awaiting 5head
+    }
+
+    private async Task SearchReservations()
+    {
+        // awaiting 5head
+    }
+
+    private async Task ReserveReservation()
+    {
+        // waiting 5head
+    }
+
+
+}
