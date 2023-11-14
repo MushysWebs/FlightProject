@@ -123,6 +123,34 @@
 </style>
 
 @code {
+
+
+    public string reservationCode { get; set; }
+
+    public string from { get; set; }
+    public string to { get; set; }
+    public string day { get; set; }
+    public string flightsText { get; set; }
+    public int numberOfSeats { get; set; }
+
+    public string reservedFlight { get; set; } //FOR DEBUGGING PURPOSES... TO SEE IF FLIGHT IS FOUND
+
+    public string reserveFlightCode { get; set; }
+    public string reserveAirline { get; set; }
+    public string reserveDay { get; set; }
+    public string reserveTime { get; set; }
+    public string reserveCost { get; set; }
+    public string reserveName { get; set; }
+    public string reserveCitizenship { get; set; }
+
+    private string[] flightsArray;
+    private ReservationManager reservationManager;
+
+    private string flightsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Traveless", "flights.csv");
+    private string reservationsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Traveless", "reservations.bin");
+
+
+
     public class Reservation
     {
         public string ReservationCode { get; set; }
@@ -149,8 +177,19 @@
     public class ReservationManager
     {
         public List<Reservation> Reservations { get; set; } = new List<Reservation>();
-        string filePath = "reservations.save";
-        
+        private string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Traveless", "reservations.js");
+
+        public ReservationManager()
+        {
+            // Ensure the directory exists
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+            // Load existing reservations if the file exists
+            if (File.Exists(filePath))
+            {
+                Reservations = (List<Reservation>)BinaryDeserialize(filePath);
+            }
+        }
         public void Persist(object data, string filePath)
         {
             FileStream fileStream;
@@ -166,14 +205,10 @@
             object obj = null;
             FileStream fileStream;
             BinaryFormatter bf = new BinaryFormatter();
-            if(File.Exists(filePath))
-            {
-                fileStream = File.OpenRead(filePath);
-                obj = bf.Deserialize(fileStream);
-                fileStream.Close();
-            }
+            fileStream = File.OpenRead(filePath);
+            obj = bf.Deserialize(fileStream);
+            fileStream.Close();
             return obj;
-
         }
     }
 
@@ -189,36 +224,25 @@
         reservationCode = GenerateReservationCode();
     }
 
-
-    public string reservationCode { get; set; }
-
-    public string from { get; set; }
-    public string to { get; set; }
-    public string day { get; set; }
-    public string flightsText { get; set; }
-    public int numberOfSeats { get; set; }
-
-    public string reservedFlight { get; set; } //FOR DEBUGGING PURPOSES... TO SEE IF FLIGHT IS FOUND
-
-    public string reserveFlightCode { get; set; }
-    public string reserveAirline { get; set; }
-    public string reserveDay { get; set; }
-    public string reserveTime { get; set; }
-    public string reserveCost { get; set; }
-    public string reserveName { get; set; }
-    public string reserveCitizenship { get; set; }
-
-    private string[] flightsArray;
-    private ReservationManager reservationManager;
-
     protected override async Task OnInitializedAsync()
     {
         reservationManager = new ReservationManager();
-        await LoadFlights();
+        await LoadFlightsAsync();
     }
 
-    private async Task LoadFlights()
+    private async Task LoadFlightsAsync()
     {
+        Directory.CreateDirectory(Path.GetDirectoryName(flightsFilePath));
+
+        if (!File.Exists(flightsFilePath))
+        {
+            using (var packageStream = await FileSystem.OpenAppPackageFileAsync("flights.csv"))
+            using (var fileStream = File.Create(flightsFilePath))
+            {
+                await packageStream.CopyToAsync(fileStream);
+            }
+        }
+
         try
         {
             using var stream = await FileSystem.OpenAppPackageFileAsync("flights.csv");
@@ -268,44 +292,63 @@
 
     private async Task ReserveFlight()
     {
+        if (string.IsNullOrEmpty(reserveFlightCode))
+        {
+            reservedFlight = "A reservation is to be made but no flight is selected";
+            return;
+        }
+        else if (string.IsNullOrEmpty(reserveName))
+        {
+            reservedFlight = "The name field is empty";
+            return;
+        }
+        else if (string.IsNullOrEmpty(reserveCitizenship))
+        {
+            reservedFlight = "The citizenship field is empty";
+            return;
+        }
         try
         {
             var matchingFlight = flightsArray.FirstOrDefault(flight =>
             {
                 var elements = flight.Split(',');
                 return elements.Length >= 5 &&
-                    elements[0].Trim().Equals(reserveFlightCode, StringComparison.OrdinalIgnoreCase) &&
-                    elements[1].Trim().Equals(reserveAirline, StringComparison.OrdinalIgnoreCase) &&
-                    elements[4].Trim().Equals(reserveDay, StringComparison.OrdinalIgnoreCase) &&
-                    elements[5].Trim().Equals(reserveTime, StringComparison.OrdinalIgnoreCase) &&
-                    elements[7].Trim().Equals(reserveCost, StringComparison.OrdinalIgnoreCase);
+                    elements[0].Trim().Equals(reserveFlightCode, StringComparison.OrdinalIgnoreCase);
             });
-
-            //DEBUGGING FIELD. NOT NEEDED FOR FINAL PRODUCT.
             if (matchingFlight != null)
             {
                 CreateReservationCode();
                 var elements = matchingFlight.Split(',');
-                var matchingIndex = Array.IndexOf(flightsArray, matchingFlight);
-                reservedFlight = $"Reserved Flight: {string.Join(",", elements.Take(elements.Length - 2))}, Reservation Code: {reservationCode}, {elements[6]}";
-                if (int.TryParse(elements[6], out var seats) && seats > 0)
+                var seatsAvailable = int.Parse(elements[6]);
+                if (seatsAvailable > 0)
                 {
-                    seats--;
-                    elements[6] = seats.ToString();
-                    flightsArray[matchingIndex] = string.Join(",", elements);
-                    //     
-                    using var stream = await FileSystem.OpenAppPackageFileAsync("flights.csv");
-                    //
-                    var updatedFlights = string.Join("\n", flightsArray);
-                    using var streamWriter = new StreamWriter(stream);
-                    await streamWriter.WriteAsync(updatedFlights);
+                    // Update the seats count in the flights data
+                    seatsAvailable--;
+                    elements[6] = seatsAvailable.ToString();
+                    flightsArray[Array.IndexOf(flightsArray, matchingFlight)] = string.Join(",", elements);
+                    UpdateFlightsDataFile();
 
+                    // Create and persist the reservation
+                    Reservation newReservation = new Reservation
+                        {
+                            ReservationCode = reservationCode,
+                            FlightCode = reserveFlightCode,
+                            Airline = reserveAirline,
+                            Cost = reserveCost,
+                            Name = reserveName,
+                            Citizenship = reserveCitizenship,
+                            IsActive = true
+                        };
+
+                    reservationManager.Reservations.Add(newReservation);
+                    reservationManager.Persist(reservationManager.Reservations, filePath);
+
+                    reservedFlight = $"Reservation successful. Code: {newReservation.ReservationCode}";
                 }
                 else
                 {
                     reservedFlight = "There are no seats available";
                 }
-
             }
             else
             {
@@ -314,25 +357,15 @@
         }
         catch (Exception ex)
         {
-        }
-        //DEBUGGING FIELD. NOT NEEDED FOR FINAL PRODUCT.
-        void errorHandling()
-        {
-            reservedFlight = "";
-        }
-        if (string.IsNullOrEmpty(reserveFlightCode))
-        {
-            reservedFlight = "A reservation is to be made but no flight is selected";
-        }
-        else if (string.IsNullOrEmpty(reserveName))
-        {
-            reservedFlight = "The name field is empty";
-        }
-        else if (string.IsNullOrEmpty(reserveCitizenship))
-        {
-            reservedFlight = "The citizenship field is empty";
+            reservedFlight = $"An error occurred: {ex.Message}";
         }
     }
+    private void UpdateFlightsDataFile()
+    {
+        var updatedFlights = string.Join("\n", flightsArray);
+        File.WriteAllText("flights.csv", updatedFlights);
+    }
+
 }
 
 
