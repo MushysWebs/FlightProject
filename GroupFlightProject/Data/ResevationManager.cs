@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,9 +15,15 @@ public class Reservation
     public string Citizenship { get; set; }
     public bool IsActive { get; set; }
 
+    public string Status
+    {
+        get => IsActive ? "Active" : "Inactive";
+        set => IsActive = value == "Active";
+    }
+
     public override string ToString()
     {
-        return $"Reservation Code: {ReservationCode}, Flight: {FlightCode}, Airline: {Airline}, Cost: {Cost}, Name: {Name}, Citizenship: {Citizenship}, Active: {IsActive}";
+        return $"Reservation Code: {ReservationCode}, Flight: {FlightCode}, Airline: {Airline}, Cost: {Cost}, Name: {Name}, Citizenship: {Citizenship}, Status: {IsActive}";
     }
 }
 public class ReservationManager
@@ -43,19 +50,56 @@ public class ReservationManager
             Console.WriteLine($"No file found. {ex.Message}");
         }
     }
-
-    public void Persist(object data)
+    private void LoadReservations()
     {
+        // Ensure the directory exists
+        Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+        // Load existing reservations if the file exists
         try
         {
-            string json = JsonSerializer.Serialize(data);
-            File.WriteAllText(filePath, json);
+            if (File.Exists(filePath))
+            {
+                string json = File.ReadAllText(filePath);
+                Reservations = JsonSerializer.Deserialize<List<Reservation>>(json) ?? new List<Reservation>();
+            }
         }
-        catch (JsonException ex)
+        catch (Exception ex)
         {
             Console.WriteLine($"Could not save file. {ex.Message}");
         }
+    }
 
+    public List<Reservation> FindReservations(string reservationCode, string airline, string name)
+    {
+        return string.IsNullOrWhiteSpace(reservationCode) &&
+               string.IsNullOrWhiteSpace(airline) &&
+               string.IsNullOrWhiteSpace(name)
+            ? Reservations
+            : Reservations.Where(r =>
+                (string.IsNullOrWhiteSpace(reservationCode) || r.ReservationCode.Contains(reservationCode, StringComparison.OrdinalIgnoreCase)) &&
+                (string.IsNullOrWhiteSpace(airline) || r.Airline.Equals(airline, StringComparison.OrdinalIgnoreCase)) &&
+                (string.IsNullOrWhiteSpace(name) || r.Name.Contains(name, StringComparison.OrdinalIgnoreCase))
+            ).ToList();
+    }
+
+
+    public void UpdateReservation(Reservation updatedReservation)
+    {
+        // Find and update the reservation in the list
+        var reservation = Reservations.FirstOrDefault(r => r.ReservationCode == updatedReservation.ReservationCode);
+        if (reservation != null)
+        {
+            reservation.Name = updatedReservation.Name;
+            reservation.Citizenship = updatedReservation.Citizenship;
+            reservation.IsActive = updatedReservation.Status == "Active";
+        }
+    }
+
+    public void Persist()
+    {
+        string json = JsonSerializer.Serialize(Reservations);
+        File.WriteAllText(filePath, json);
     }
 
     public string GenerateReservationCode()

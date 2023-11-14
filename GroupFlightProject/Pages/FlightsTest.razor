@@ -224,7 +224,7 @@
                     IsActive = true
                 };
                 reservationManager.Reservations.Add(newReservation);
-                reservationManager.Persist(reservationManager.Reservations);
+                reservationManager.Persist();
                 seats--;
                 elements[6] = seats.ToString();
                 flightsArray[Array.IndexOf(flightsArray, matchingFlight)] = string.Join(",", elements);

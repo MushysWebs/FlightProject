@@ -7,72 +7,85 @@
 <div class="Reservations-finder">
 
     <div class="input-group">
-        <label for="ReservationCode">Code:</label>
-        <input class="input-field" @bind="reservationCode" />
+        <label for="ReservationCodeSearch">Code:</label>
+        <input class="input-field" @bind="reservationCodeSearch" />
     </div>
 
     <div class="input-group">
-        <label for="Airline">Airline:</label>
-        <input class="input-field" @bind="airline" />
+        <label for="AirlineSearch">Airline:</label>
+        <input class="input-field" @bind="airlineSearch" />
     </div>
 
     <div class="input-group">
-        <label for="Name">Name:</label>
-        <input class="input-field" @bind="passengerName" />
+        <label for="NameSearch">Name:</label>
+        <input class="input-field" @bind="nameSearch" />
     </div>
 
     <button class="btn" @onclick="SearchReservations">Find Reservations</button>
 
 </div>
 
-
-
-
-
 <div class="flex-container">
     <h2>Reservations</h2>
-    <textarea class="input-field" readonly>@reservationsText</textarea>
+    @if (foundReservations.Any())
+    {
+        <ul>
+            @foreach (var reservation in foundReservations)
+            {
+                <li @onclick="() => SelectReservation(reservation)">
+                    @reservation.ToString()
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No reservations found.</p>
+    }
 </div>
 
 <div class="flex-container">
     <h2>Reserve</h2>
 
     <div class="input-group">
-        <label for="ReservationCode">Reservation Code:</label>
-        <input class="input-field" @bind="reservationCode" />
+        <label for="ReservationCodeUpdate">Reservation Code:</label>
+        <input class="input-field" @bind="reservationCodeUpdate" readonly />
     </div>
 
     <div class="input-group">
-        <label for="FlightCode">Flight Code:</label>
-        <input class="input-field" @bind="flightCode" readonly />
+        <label for="FlightCodeUpdate">Flight Code:</label>
+        <input class="input-field" @bind="flightCodeUpdate" readonly />
     </div>
 
     <div class="input-group">
-        <label for="Airline">Airline:</label>
-        <input class="input-field" @bind="airline" readonly />
+        <label for="AirlineUpdate">Airline:</label>
+        <input class="input-field" @bind="airlineUpdate" readonly />
     </div>
 
     <div class="input-group">
-        <label for="Cost">Cost:</label>
-        <input class="input-field" @bind="cost" readonly />
+        <label for="CostUpdate">Cost:</label>
+        <input class="input-field" @bind="costUpdate" readonly />
     </div>
 
     <div class="input-group">
-        <label for="Name">Name:</label>
-        <input class="input-field" @bind="passengerName" />
+        <label for="NameUpdate">Name:</label>
+        <input class="input-field" @bind="nameUpdate" />
     </div>
 
     <div class="input-group">
-        <label for="Citizenship">Citizenship:</label>
-        <input class="input-field" @bind="citizenship" />
+        <label for="CitizenshipUpdate">Citizenship:</label>
+        <input class="input-field" @bind="citizenshipUpdate" />
     </div>
 
     <div class="input-group">
-        <label for="Status">Status:</label>
-        <input class="input-field" @bind="status" />
+        <label for="StatusUpdate">Status:</label>
+        <select class="input-field" @bind="statusUpdate">
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+        </select>
     </div>
 
-    <button class="save" @onclick="ReserveReservation">Save</button>
+    <button class="save" @onclick="UpdateReservation">Save</button>
 
 </div>
 
@@ -165,38 +178,46 @@ h2 {
     private ReservationManager reservationManager = new ReservationManager();
     private List<Reservation> foundReservations = new List<Reservation>();
     private Reservation selectedReservation;
-    public string reservationCode { get; set; }
-    public string airline { get; set; }
-    public string passengerName { get; set; }
-    public string reservationsText { get; set; }
+    private string reservationCodeSearch;
+    private string airlineSearch;
+    private string nameSearch;
+    private string statusUpdate;
 
-    
-    public string flightCode { get; set; }
-    public string cost { get; set; }
-    public string citizenship { get; set; }
-    public string status { get; set; }
-
-    private string[] reservationsArray;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadReservations();
-    }
-
-    private async Task LoadReservations()
-    {
-        // awaiting 5head
-    }
+    private string reservationCodeUpdate;
+    private string flightCodeUpdate;
+    private string airlineUpdate;
+    private string costUpdate;
+    private string nameUpdate;
+    private string citizenshipUpdate;
 
     private async Task SearchReservations()
     {
-        // awaiting 5head
+        foundReservations = reservationManager.FindReservations(reservationCodeSearch, airlineSearch, nameSearch);
     }
 
-    private async Task ReserveReservation()
+    private void SelectReservation(Reservation reservation)
     {
-        // waiting 5head
+        selectedReservation = reservation;
+        reservationCodeUpdate = reservation.ReservationCode;
+        flightCodeUpdate = reservation.FlightCode;
+        airlineUpdate = reservation.Airline;
+        costUpdate = reservation.Cost;
+        nameUpdate = reservation.Name;
+        citizenshipUpdate = reservation.Citizenship;
+        statusUpdate = reservation.Status;
     }
 
+    private void UpdateReservation()
+    {
+        if (selectedReservation != null)
+        {
+            selectedReservation.Name = nameUpdate;
+            selectedReservation.Citizenship = citizenshipUpdate;
+            selectedReservation.Status = statusUpdate;
+
+            reservationManager.UpdateReservation(selectedReservation);
+            reservationManager.Persist();
+        }
+    }
 
 }
