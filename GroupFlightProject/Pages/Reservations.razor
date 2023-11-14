@@ -25,6 +25,10 @@
 
 </div>
 
+
+
+
+
 <div class="flex-container">
     <h2>Reservations</h2>
     <textarea class="input-field" readonly>@reservationsText</textarea>
@@ -158,6 +162,9 @@ h2 {
 
 
 @code {
+    private ReservationManager reservationManager = new ReservationManager();
+    private List<Reservation> foundReservations = new List<Reservation>();
+    private Reservation selectedReservation;
     public string reservationCode { get; set; }
     public string airline { get; set; }
     public string passengerName { get; set; }
