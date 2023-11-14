@@ -1,0 +1,195 @@
+﻿@page "/reservations"
+
+
+
+<h2>Reservation Finder</h2>
+
+<div class="Reservations-finder">
+
+    <div class="input-group">
+        <label for="ReservationCode">Code:</label>
+        <input class="input-field" @bind="reservationCode" />
+    </div>
+
+    <div class="input-group">
+        <label for="Airline">Airline:</label>
+        <input class="input-field" @bind="airline" />
+    </div>
+
+    <div class="input-group">
+        <label for="Name">Name:</label>
+        <input class="input-field" @bind="passengerName" />
+    </div>
+
+    <button class="btn" @onclick="SearchReservations">Find Reservations</button>
+
+</div>
+
+<div class="flex-container">
+    <h2>Reservations</h2>
+    <textarea class="input-field" readonly>@reservationsText</textarea>
+</div>
+
+<div class="flex-container">
+    <h2>Reserve</h2>
+
+    <div class="input-group">
+        <label for="ReservationCode">Reservation Code:</label>
+        <input class="input-field" @bind="reservationCode" />
+    </div>
+
+    <div class="input-group">
+        <label for="FlightCode">Flight Code:</label>
+        <input class="input-field" @bind="flightCode" readonly />
+    </div>
+
+    <div class="input-group">
+        <label for="Airline">Airline:</label>
+        <input class="input-field" @bind="airline" readonly />
+    </div>
+
+    <div class="input-group">
+        <label for="Cost">Cost:</label>
+        <input class="input-field" @bind="cost" readonly />
+    </div>
+
+    <div class="input-group">
+        <label for="Name">Name:</label>
+        <input class="input-field" @bind="passengerName" />
+    </div>
+
+    <div class="input-group">
+        <label for="Citizenship">Citizenship:</label>
+        <input class="input-field" @bind="citizenship" />
+    </div>
+
+    <div class="input-group">
+        <label for="Status">Status:</label>
+        <input class="input-field" @bind="status" />
+    </div>
+
+    <button class="save" @onclick="ReserveReservation">Save</button>
+
+</div>
+
+
+
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+h2 {
+    text-align: center;
+}
+
+
+.Reservations-finder {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        width: 100%;
+}
+
+
+.flex-container {
+    display: flex;
+    flex-direction: column; 
+    align-items: stretch; 
+    gap: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.input-field {
+    width: 100%; 
+    padding: 8px;
+    border: 1px solid #CCCCCC;
+    border-radius: 5px;
+}
+
+.btn, .find-reservations {
+    padding: 8px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 100%; 
+}
+
+.btn:hover, .find-reservations:hover {
+    background-color: #0056b3;
+}
+
+.reservation-finder,
+.reservation-form {
+    padding: 20px;
+    background-color: white;
+}
+
+.save-button-container {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+}
+
+    .save {
+        padding: 10px 20px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        cursor: pointer;
+        width: 200px;
+        margin: 0 auto; 
+        border-radius: 5px;
+    }
+
+    .save:hover {
+        background-color: #0056b3;
+    }
+
+</style>
+
+
+@code {
+    public string reservationCode { get; set; }
+    public string airline { get; set; }
+    public string passengerName { get; set; }
+    public string reservationsText { get; set; }
+
+    
+    public string flightCode { get; set; }
+    public string cost { get; set; }
+    public string citizenship { get; set; }
+    public string status { get; set; }
+
+    private string[] reservationsArray;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadReservations();
+    }
+
+    private async Task LoadReservations()
+    {
+        // awaiting 5head
+    }
+
+    private async Task SearchReservations()
+    {
+        // awaiting 5head
+    }
+
+    private async Task ReserveReservation()
+    {
+        // waiting 5head
+    }
+
+
+}
