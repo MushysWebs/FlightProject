@@ -1,7 +1,9 @@
 ﻿@page "/flightsTest"
 @using System.IO
 @using System.Diagnostics;
-@using System.Runtime.Serialization.Formatters.Binary;
+@using System.Text.Json;
+@using Microsoft.Extensions.Logging
+@inject ILogger<FlightsTest> Logger
 
 
 <h2>Flight Finder</h2>
@@ -157,7 +159,6 @@
             using var reader = new StreamReader(stream);
             var flights = await reader.ReadToEndAsync();
             flightsArray = flights.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-            reservationManager.Reservations = (List<Reservation>)reservationManager.BinaryDeserialize(reservationsFilePath) ?? new List<Reservation>();
         }
         catch (Exception ex)
         {
@@ -228,7 +229,7 @@
                 elements[6] = seats.ToString();
                 flightsArray[Array.IndexOf(flightsArray, matchingFlight)] = string.Join(",", elements);
 
-                reservedFlight = $"Reservation successful. Code: {reservationCode}";
+                reservedFlight = $"Reservation successful. Code: {reservationCode}. The reservations file is located at: {reservationManager.filePath}";
             }
             else
             {
@@ -278,25 +279,26 @@
 
     public class ReservationManager
     {
-        public List<Reservation> Reservations { get; set; }
-        private string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Traveless", "reservations.bin");
+        public List<Reservation> Reservations { get; set; } = new List<Reservation>();
+        public string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Traveless", "reservations.json");
+
+        public ReservationManager()
+        {
+            // Ensure the directory exists
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+            // Load existing reservations if the file exists
+            if (File.Exists(filePath))
+            {
+                string json = File.ReadAllText(filePath);
+                Reservations = JsonSerializer.Deserialize<List<Reservation>>(json) ?? new List<Reservation>();
+            }
+        }
 
         public void Persist(object data)
         {
-            using var fileStream = File.Create(filePath);
-            var binFormat = new BinaryFormatter();
-            binFormat.Serialize(fileStream, data);
-        }
-
-        public object BinaryDeserialize(string filePath)
-        {
-            if (File.Exists(filePath))
-            {
-                using var fileStream = File.OpenRead(filePath);
-                var binFormat = new BinaryFormatter();
-                return binFormat.Deserialize(fileStream);
-            }
-            return null;
+            string json = JsonSerializer.Serialize(data);
+            File.WriteAllText(filePath, json);
         }
     }
 }
