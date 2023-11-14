@@ -1,9 +1,10 @@
-﻿@page "/flightsTest"
+﻿<!-- -->
+
+@page "/flightsTest"
 @using System.IO
 @using System.Diagnostics;
 @using System.Text.Json;
 @using Microsoft.Extensions.Logging
-@inject ILogger<FlightsTest> Logger
 
 
 <h2>Flight Finder</h2>
@@ -125,6 +126,8 @@
 </style>
 
 @code {
+    private string[] flightsArray;
+    private ReservationManager reservationManager;
     private string reservationsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Traveless", "reservations.bin");
 
     public string reservationCode { get; set; }
@@ -141,9 +144,6 @@
     public string reserveCost { get; set; }
     public string reserveName { get; set; }
     public string reserveCitizenship { get; set; }
-
-    private string[] flightsArray;
-    private ReservationManager reservationManager;
 
     protected override async Task OnInitializedAsync()
     {
@@ -212,7 +212,7 @@
             var elements = matchingFlight.Split(',');
             if (int.TryParse(elements[6], out var seats) && seats > 0)
             {
-                CreateReservationCode();
+                reservationCode = reservationManager.GenerateReservationCode();
                 Reservation newReservation = new Reservation
                 {
                     ReservationCode = reservationCode,
@@ -242,18 +242,6 @@
         }
     }
 
-    private string GenerateReservationCode()
-    {
-        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        var random = new Random();
-        return new string(Enumerable.Repeat(chars, 6).Select(s => s[random.Next(s.Length)]).ToArray());
-    }
-
-    public void CreateReservationCode()
-    {
-        reservationCode = GenerateReservationCode();
-    }
-
     public class Reservation
     {
         public string ReservationCode { get; set; }
@@ -264,16 +252,9 @@
         public string Citizenship { get; set; }
         public bool IsActive { get; set; }
 
-        public void SetPassengerName(string name)
+        public override string ToString()
         {
-            if (!string.IsNullOrEmpty(name))
-            {https://github.com/MushysWebs/FlightProject/pull/12/conflict?name=GroupFlightProject%252FPages%252FFlightsTest.razor&ancestor_oid=75631c433900fc4a40d39d50ed32f8ce1f41df78&base_oid=b838d234f2fe82f5356d3e4237099e39ba5b3cf8&head_oid=22c41ecf8dca50a7f3eb4709b948e0b96f2873b4
-                Name = name;
-            }
-            else
-            {
-                throw new ArgumentException("Passenger name is empty");
-            }
+            return $"Reservation Code: {ReservationCode}, Flight: {FlightCode}, Airline: {Airline}, Cost: {Cost}, Name: {Name}, Citizenship: {Citizenship}, Active: {IsActive}";
         }
     }
   
@@ -288,17 +269,41 @@
             Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 
             // Load existing reservations if the file exists
-            if (File.Exists(filePath))
+            try
             {
-                string json = File.ReadAllText(filePath);
-                Reservations = JsonSerializer.Deserialize<List<Reservation>>(json) ?? new List<Reservation>();
+                if (File.Exists(filePath))
+                {
+                    string json = File.ReadAllText(filePath);
+                    Reservations = JsonSerializer.Deserialize<List<Reservation>>(json) ?? new List<Reservation>();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine ($"No file found. {ex.Message}");
             }
         }
 
         public void Persist(object data)
         {
-            string json = JsonSerializer.Serialize(data);
-            File.WriteAllText(filePath, json);
+            try
+            {
+                string json = JsonSerializer.Serialize(data);
+                File.WriteAllText(filePath, json);
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Could not save file. {ex.Message}");
+            }
+
         }
+
+        public string GenerateReservationCode()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const string numbers = "0123456789";
+            var random = new Random();
+            return $"{chars[random.Next(chars.Length)]}{new string(Enumerable.Repeat(numbers, 4).Select(s => s[random.Next(s.Length)]).ToArray())}";
+        }
+
     }
 }
