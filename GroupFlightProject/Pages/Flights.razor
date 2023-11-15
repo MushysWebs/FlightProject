@@ -1,6 +1,6 @@
 ﻿<!-- -->
 
-@page "/flightsTest"
+@page "/flights"
 @using System.IO
 @using System.Diagnostics;
 @using System.Text.Json;
@@ -76,11 +76,16 @@
 
     <button type="reserve" class="btn" @onclick="ReserveFlight">Reserve</button>
 
-    <textarea class="input-field" readonly>@reservedFlight</textarea> <!--FOR DEBUGGING PURPOSES... TO SEE IF FLIGHT IS FOUND-->
+    <p>@reservedFlight</p>
 </div>
 
 
 <style>
+
+    p {
+        margin: 30px;
+        text-align: center;
+    }
 
     h2 {
         text-align: center;
@@ -229,7 +234,7 @@
                 elements[6] = seats.ToString();
                 flightsArray[Array.IndexOf(flightsArray, matchingFlight)] = string.Join(",", elements);
 
-                reservedFlight = $"Reservation successful. Code: {reservationCode}. The reservations file is located at: {reservationManager.filePath}";
+                reservedFlight = $"Reservation Code: {reservationCode}";
             }
             else
             {

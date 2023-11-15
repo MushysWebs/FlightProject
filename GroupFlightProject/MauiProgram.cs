@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.WebView.Maui;
-using GroupFlightProject.Data;
+using GroupFlightProject;
 
 namespace GroupFlightProject;
 
