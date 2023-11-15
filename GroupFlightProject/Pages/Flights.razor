@@ -1,4 +1,10 @@
-﻿<!-- -->
+﻿@*
+    Flight Finder UI Page - GroupFlightProject
+    Created by: Ricky To, Grady Spurrill, Logan Hoppen
+    This page allows users to search for flights by specifying departure and arrival locations and a date. 
+    The system processes the inputs to display available flights and enables users to make reservations. 
+    The page is organized into search, results display, and flight reservation input sections.
+*@
 
 @page "/flights"
 @using System.IO
@@ -6,7 +12,7 @@
 @using System.Text.Json;
 @using Microsoft.Extensions.Logging
 
-
+<!--Flight finder section-->
 <h2>Flight Finder</h2>
 
 <div class="flex-container">
@@ -30,12 +36,13 @@
 
 </div>
 
+<!--Flight results section-->
 <div class="flex-container">
     <h2>Flights</h2>
     <textarea class="input-field" readonly>@flightsText</textarea>
 </div>
 
-
+<!--Flights display section-->
 <div class="input-row">
     <h2>Reserve</h2>
 
@@ -79,7 +86,7 @@
     <p>@reservedFlight</p>
 </div>
 
-
+<!--Styling for the flight finder page-->
 <style>
 
     p {
@@ -130,7 +137,9 @@
 
 </style>
 
+<!--Code for the flight finder page-->
 @code {
+    //Flight finder variables
     private string[] flightsArray;
     private ReservationManager reservationManager;
     private string reservationsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Traveless", "reservations.bin");
@@ -156,6 +165,7 @@
         await LoadFlights();
     }
 
+    //Load flights info from a csv file
     private async Task LoadFlights()
     {
         try
@@ -170,7 +180,8 @@
             flightsText = $"Error loading flights: {ex.Message}";
         }
     }
-
+    
+    //Search and filter flights based on user inputs
     private void SearchFlights()
     {
         var filteredFlights = flightsArray
@@ -197,6 +208,7 @@
         flightsText = string.Join("\n", filteredFlights);
     }
 
+    //Handle reservations of flights and error handling
     private async Task ReserveFlight()
     {
         if (string.IsNullOrEmpty(reserveFlightCode) || string.IsNullOrEmpty(reserveName) || string.IsNullOrEmpty(reserveCitizenship))
