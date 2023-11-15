@@ -132,7 +132,6 @@ h2 {
 .input-group {
     display: flex;
     flex-direction: column;
-    margin-bottom: 10px;
 }
 
 .input-field {
@@ -205,7 +204,11 @@ h2 {
 
     private async Task SearchReservations()
     {
-        foundReservations = reservationManager.FindReservations(reservationCodeSearch, airlineSearch, nameSearch);
+        var allReservations = reservationManager.FindReservations(reservationCodeSearch, airlineSearch, nameSearch);
+
+        // Filter for only Active reservations
+        foundReservations = allReservations.Where(r => r.Status == "Active").ToList();
+
         reservationsText = string.Join(Environment.NewLine, foundReservations.Select(r => r.ToString()));
 
         searchPerformed = true;
