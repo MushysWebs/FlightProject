@@ -85,16 +85,19 @@
         <input class="input-field"      @bind="reserveCitizenship" />
     </div>
                                         @* Button to submit the reservation *@
-    <button type="reserve" class="btnbot" @onclick="ReserveFlight">Reserve</button>
+    <button class="reserve" @onclick="ReserveFlight">Reserve</button>
 
                                         @* Displays the reservation code or errors if unsuccesful*@
-    <p>@reservedFlight</p>
+    <div class="flex-container">
+        <p>@reservedFlight</p>
+    </div>
 </div>
 
 <!--Styling for the flight finder page-->
 <style>
 
     p {
+        display: flex;
         margin: 30px;
         text-align: center;
     }
@@ -143,20 +146,25 @@
         color: white;
         border: none;
         cursor: pointer;
-        margin-top: 17px;
+        margin-top: 20px;
     }
 
-    .btnbot {
+    .reserve {
         display: flex;
-        align-content: center;
-        margin: 15px auto;
+        padding: 10px 20px;
         background-color: #007BFF;
         color: white;
         border: none;
         cursor: pointer;
-        margin-top: 15px;
-        margin-bottom: 15px;
-        max-width: 275px;
+        width: 250px;
+        margin: 0 auto;
+        border-radius: 5px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .reserve:hover {
+        background-color: #0056b3;
     }
 
     .btn:hover {

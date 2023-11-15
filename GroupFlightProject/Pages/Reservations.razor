@@ -14,7 +14,7 @@
 
 @page "/reservations"
 
-<h2>Reservation Finder</h2>
+<h4>Reservation Finder</h4>
                                     @* Allows input of search criteria for finding reservations *@
 <div class="Reservations-finder">
 
@@ -37,7 +37,7 @@
 </div>
                                    @* Displays the selectable search results *@
 <div class="flex-container">
-    <h2 class="reservations">Reservations</h2>
+    <h4 class="reservations">Reservations</h4>
     @if (searchPerformed)
     {
         <!-- displays a list or a message based on search results -->
@@ -71,7 +71,7 @@
 
                                @*Allows editing and updating of a selected reservation *@
 <div class="flex-container">
-    <h2 class="reserve">Reserve</h2>
+    <h4 class="reserve">Reserve</h4>
 
     <div class="input-group">
         <label for="ReservationCodeUpdate">Reservation Code:</label>
@@ -121,7 +121,7 @@
     box-sizing: border-box;
 }
 
-h2 {
+h4 {
     text-align: center;
 }
 
@@ -173,11 +173,6 @@ h2 {
     background-color: white;
 }
 
-.save-button-container {
-    display: flex;
-    justify-content: center; 
-    align-items: center; 
-}
 
 .save {
     padding: 10px 20px;
