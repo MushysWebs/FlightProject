@@ -18,8 +18,7 @@
 @using System.Text.Json;
 @using Microsoft.Extensions.Logging
 
-<!--Flight finder section-->
-<h2>Flight Finder</h2>
+<h4>Flight Finder</h4>
 
 <div class="flex-container">            @* Input section for searching flights *@
 
@@ -42,9 +41,9 @@
 </div>
 
                                         @* Displays the list of flights based on the search criteria *@
-<div class="flex-container">
+<div class="input-row">
     <h2>Flights</h2>
-    <textarea class="input-field" readonly>@flightsText</textarea>
+    <textarea class="input-field" readonly rows=1>@flightsText</textarea>
 </div>
 
                                         @* Reservation section where users can reserve flights and input passenger details *@
