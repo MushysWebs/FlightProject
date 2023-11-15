@@ -65,7 +65,7 @@
         }
     } else
     {
-        <textarea class="input-field" @bind="reservationsText" readonly rows=1></textarea>
+        <textarea class="input-field2" @bind="reservationsText" readonly rows=1></textarea>
     }
 </div>
 
@@ -154,14 +154,24 @@ h4 {
     border-radius: 5px;
     height: 35px;
 }
+.input-field2 {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #CCCCCC;
+        border-radius: 5px;
+        height: 45px;
+}
+
+
 
 .btn {
-    padding: 8px;
+    padding: 6px;
     background-color: #007BFF;
     color: white;
     border: none;
     cursor: pointer;
     width: 100%; 
+    margin-bottom: -24px;
 }
 
 .btn:hover {
@@ -186,6 +196,10 @@ h4 {
     border-radius: 5px;
     margin-top: 20px;
     margin-bottom: 20px;
+}
+
+#td.save {
+    margin-bottom: -75px;
 }
 
 .save:hover {
