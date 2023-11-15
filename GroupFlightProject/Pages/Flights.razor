@@ -24,20 +24,20 @@
 
     <div class="input-group">
         <label for="from">From:</label>
-        <input class="input-field" @bind="from" />
+        <input class="input-field"      @bind="from" />
     </div>
 
     <div class="input-group">
         <label for="to">To:</label>
-        <input class="input-field" @bind="to" />
+        <input class="input-field"      @bind="to" />
     </div>
 
     <div class="input-group">
         <label for="day">Day:</label>
-        <input class="input-field" @bind="day" />
+        <input class="input-field"      @bind="day" />
     </div>
                                         @* Search button triggers the SearchFlights method *@
-    <button type="submit" class="btn" @onclick="SearchFlights">Find flights</button>
+    <button type="submit" class="btn"   @onclick="SearchFlights">Find flights</button>
 </div>
 
                                         @* Displays the list of flights based on the search criteria *@
@@ -52,37 +52,37 @@
                                         @* Non editable inputs for displaying selected flight information *@
     <div class="input-group">
         <label for="reserveFlightCode">Flight code:</label>
-        <input class="input-field" @bind="reserveFlightCode" readonly />
+        <input class="input-field"      @bind="reserveFlightCode" readonly />
     </div>
 
     <div class="input-group">
         <label for="reserveAirline">Airline:</label>
-        <input class="input-field" @bind="reserveAirline" readonly />
+        <input class="input-field"      @bind="reserveAirline" readonly />
     </div>
 
     <div class="input-group">
         <label for="reserveDay">Day:</label>
-        <input class="input-field" @bind="reserveDay" readonly />
+        <input class="input-field"      @bind="reserveDay" readonly />
     </div>
 
     <div class="input-group">
         <label for="reserveTime">Time:</label>
-        <input class="input-field" @bind="reserveTime" readonly />
+        <input class="input-field"      @bind="reserveTime" readonly />
     </div>
 
     <div class="input-group">
         <label for="reserveCost">Cost:</label>
-        <input class="input-field" @bind="reserveCost" readonly />
+        <input class="input-field"      @bind="reserveCost" readonly />
     </div>
 
     <div class="input-group">           @* Editable inputs for inputting passenger info *@
         <label for="reserveName">Name:</label>
-        <input class="input-field" @bind="reserveName" />
+        <input class="input-field"      @bind="reserveName" />
     </div>
 
     <div class="input-group">
         <label for="reserveCost">Citizenship:</label>
-        <input class="input-field" @bind="reserveCitizenship" />
+        <input class="input-field"      @bind="reserveCitizenship" />
     </div>
                                         @* Button to submit the reservation *@
     <button type="reserve" class="btnbot" @onclick="ReserveFlight">Reserve</button>
@@ -147,15 +147,16 @@
     }
 
     .btnbot {
+        display: flex;
         align-content: center;
-        flex: 1;
+        margin: 15px auto;
         background-color: #007BFF;
         color: white;
         border: none;
         cursor: pointer;
         margin-top: 15px;
+        margin-bottom: 15px;
         max-width: 275px;
-        text-align: center;
     }
 
     .btn:hover {
