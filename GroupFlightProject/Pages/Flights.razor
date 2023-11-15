@@ -1,4 +1,16 @@
-﻿<!-- -->
+﻿@*
+    Names: Ricky To, Grady Spurril, Logan Hoppen
+    Date: November 14th 2023
+    Description:    This page is for searching flights and creating reservations in Traveless.
+                    It enables the user to input search criteria (origin, destination, and departure day) 
+                    to locate available flights from a CSV file. 
+                    The user can then make a reservation by selecting a flight and providing
+                    passenger details. The reservation is processed by generating a code and 
+                    saving the reservation details to a local storage file.
+                    The output includes a list of flights matching the search criteria and a confirmation
+                    message with a reservation code upon successful reservation.
+
+*@
 
 @page "/flights"
 @using System.IO
@@ -9,7 +21,7 @@
 
 <h2>Flight Finder</h2>
 
-<div class="flex-container">
+<div class="flex-container">            @* Input section for searching flights *@
 
     <div class="input-group">
         <label for="from">From:</label>
@@ -25,20 +37,20 @@
         <label for="day">Day:</label>
         <input class="input-field" @bind="day" />
     </div>
-
+                                        @* Search button triggers the SearchFlights method *@
     <button type="submit" class="btn" @onclick="SearchFlights">Find flights</button>
 
 </div>
-
+                                        @* Displays the list of flights based on the search criteria *@
 <div class="flex-container">
     <h2>Flights</h2>
     <textarea class="input-field" readonly>@flightsText</textarea>
 </div>
 
-
+                                        @* Reservation section where users can reserve flights and input passenger details *@
 <div class="input-row">
     <h2>Reserve</h2>
-
+                                        @* Non editable inputs for displaying selected flight information *@
     <div class="input-group">
         <label for="reserveFlightCode">Flight code:</label>
         <input class="input-field" @bind="reserveFlightCode" readonly />
@@ -64,7 +76,7 @@
         <input class="input-field" @bind="reserveCost" readonly />
     </div>
 
-    <div class="input-group">
+    <div class="input-group">           @* Editable inputs for inputting passenger info *@
         <label for="reserveName">Name:</label>
         <input class="input-field" @bind="reserveName" />
     </div>
@@ -73,9 +85,10 @@
         <label for="reserveCost">Citizenship:</label>
         <input class="input-field" @bind="reserveCitizenship" />
     </div>
-
+                                        @* Button to submit the reservation *@
     <button type="reserve" class="btn" @onclick="ReserveFlight">Reserve</button>
 
+                                        @* Displays the reservation code or errors if unsuccesful*@
     <p>@reservedFlight</p>
 </div>
 
@@ -130,18 +143,22 @@
 
 </style>
 
-@code {
+@code {             
+    //Array to hold flight data from CSV                                                    
     private string[] flightsArray;
-    private ReservationManager reservationManager;
+    //Instance of ReservationManager for reservation operations
+    private ReservationManager reservationManager;     
+    //Path to the reservation files in local appdata directory
     private string reservationsFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Traveless", "reservations.bin");
 
+    //Properties for holding the flight search and reservation info
     public string reservationCode { get; set; }
     public string from { get; set; }
     public string to { get; set; }
     public string day { get; set; }
     public string flightsText { get; set; }
-    public string reservedFlight { get; set; }
 
+    public string reservedFlight { get; set; }
     public string reserveFlightCode { get; set; }
     public string reserveAirline { get; set; }
     public string reserveDay { get; set; }
@@ -150,19 +167,21 @@
     public string reserveName { get; set; }
     public string reserveCitizenship { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
+    protected override async Task OnInitializedAsync()  @* Instantiate the reservation manager and load flights upon initialization *@
+    {                             
         reservationManager = new ReservationManager();
         await LoadFlights();
     }
 
-    private async Task LoadFlights()
+    private async Task LoadFlights()                    @* Load flights from the CSV file and store them *@
     {
-        try
-        {
+        try                         
+        {   // Open the CSV file as a stream and read from it
             using var stream = await FileSystem.OpenAppPackageFileAsync("flights.csv");
             using var reader = new StreamReader(stream);
             var flights = await reader.ReadToEndAsync();
+
+            //Split it by new lines into the array of flights
             flightsArray = flights.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
         }
         catch (Exception ex)
@@ -171,22 +190,31 @@
         }
     }
 
-    private void SearchFlights()
-    {
+    private void SearchFlights()                        @* Filter flights then update the flightsText *@
+    {                           
         var filteredFlights = flightsArray
             .Where(flight =>
             {
+                //Split the CVS row into individual elements
                 var elements = flight.Split(',');
+
+                //Check if the flight matches the search criteria
                 return elements.Length >= 5 &&
                     elements[2].Trim().Equals(from, StringComparison.OrdinalIgnoreCase) &&
                     elements[3].Trim().Equals(to, StringComparison.OrdinalIgnoreCase) &&
                     elements[4].Trim().Equals(day, StringComparison.OrdinalIgnoreCase);
             });
 
+        // Check if any flights were found that match the criteria
         if (filteredFlights.Any())
         {
+            // Select the first flight that matches the criteria
             var selectedFlight = filteredFlights.First();
+
+            // Split the flight details into individual elements
             var elements = selectedFlight.Split(',');
+
+            // Bind the flight details to the UI elements for display
             reserveFlightCode = elements[0];
             reserveAirline = elements[1];
             reserveDay = elements[4];
@@ -194,17 +222,20 @@
             reserveCost = elements[7];
         }
 
+        // Join all filtered flights into a single string to display in the UI
         flightsText = string.Join("\n", filteredFlights);
     }
 
-    private async Task ReserveFlight()
+    private async Task ReserveFlight()                    @* Create a reservation if the selected flight has available seats *@
     {
+        //Check if all required fields are filled
         if (string.IsNullOrEmpty(reserveFlightCode) || string.IsNullOrEmpty(reserveName) || string.IsNullOrEmpty(reserveCitizenship))
         {
             reservedFlight = "All fields must be filled to make a reservation.";
             return;
         }
-
+        
+        //Find a flight in the flights array that matches
         var matchingFlight = flightsArray.FirstOrDefault(flight =>
         {
             var elements = flight.Split(',');
@@ -212,12 +243,17 @@
                 elements[0].Trim().Equals(reserveFlightCode, StringComparison.OrdinalIgnoreCase);
         });
 
+        //If matching flight is found, attempt to create a reservation
         if (matchingFlight != null)
         {
+            //Check if there are availble seats
             var elements = matchingFlight.Split(',');
             if (int.TryParse(elements[6], out var seats) && seats > 0)
             {
+                //Generate reservation code
                 reservationCode = reservationManager.GenerateReservationCode();
+
+                //Create a new reservation
                 Reservation newReservation = new Reservation
                 {
                     ReservationCode = reservationCode,
@@ -228,12 +264,17 @@
                     Citizenship = reserveCitizenship,
                     IsActive = true
                 };
+
+                //Add the new reservation to the list and persist it to the file
                 reservationManager.Reservations.Add(newReservation);
                 reservationManager.Persist();
+
+                //Update the flights array with less seats.
                 seats--;
                 elements[6] = seats.ToString();
                 flightsArray[Array.IndexOf(flightsArray, matchingFlight)] = string.Join(",", elements);
 
+                //Provides confirmation to the user by displaying reservation code
                 reservedFlight = $"Reservation Code: {reservationCode}";
             }
             else
