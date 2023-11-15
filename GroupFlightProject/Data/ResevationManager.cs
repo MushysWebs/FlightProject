@@ -23,7 +23,7 @@ public class Reservation
 
     public override string ToString()
     {
-        return $"Reservation Code: {ReservationCode}, Flight: {FlightCode}, Airline: {Airline}, Cost: {Cost}, Name: {Name}, Citizenship: {Citizenship}, Status: {IsActive}";
+        return $"Reservation Code: {ReservationCode}, Flight: {FlightCode}, Airline: {Airline}, Cost: {Cost}, Name: {Name}, Citizenship: {Citizenship}, Status: {Status}";
     }
 }
 public class ReservationManager
@@ -77,8 +77,8 @@ public class ReservationManager
                string.IsNullOrWhiteSpace(name)
             ? Reservations
             : Reservations.Where(r =>
-                (string.IsNullOrWhiteSpace(reservationCode) || r.ReservationCode.Contains(reservationCode, StringComparison.OrdinalIgnoreCase)) &&
-                (string.IsNullOrWhiteSpace(airline) || r.Airline.Equals(airline, StringComparison.OrdinalIgnoreCase)) &&
+                (string.IsNullOrWhiteSpace(reservationCode) || r.ReservationCode.Equals(reservationCode, StringComparison.OrdinalIgnoreCase)) &&
+                (string.IsNullOrWhiteSpace(airline) || r.Airline.Contains(airline, StringComparison.OrdinalIgnoreCase)) &&
                 (string.IsNullOrWhiteSpace(name) || r.Name.Contains(name, StringComparison.OrdinalIgnoreCase))
             ).ToList();
     }

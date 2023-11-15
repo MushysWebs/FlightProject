@@ -29,14 +29,19 @@
     <h2>Reservations</h2>
     @if (foundReservations.Any())
     {
-        <ul>
-            @foreach (var reservation in foundReservations)
-            {
-                <li @onclick="() => SelectReservation(reservation)">
-                    @reservation.ToString()
-                </li>
-            }
-        </ul>
+        <table class="table">
+            <tbody>
+                @foreach (var reservation in foundReservations)
+                {
+                    <tr>
+                        <td>@reservation.ToString()</td>
+                        <td>
+                            <button class="save" @onclick="() => SelectReservation(reservation)">Select</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     }
     else
     {
@@ -131,7 +136,7 @@ h2 {
     border-radius: 5px;
 }
 
-.btn, .find-reservations {
+.btn {
     padding: 8px;
     background-color: #007BFF;
     color: white;
@@ -140,7 +145,7 @@ h2 {
     width: 100%; 
 }
 
-.btn:hover, .find-reservations:hover {
+.btn:hover {
     background-color: #0056b3;
 }
 
@@ -189,19 +194,25 @@ h2 {
     private string costUpdate;
     private string nameUpdate;
     private string citizenshipUpdate;
+    private string reservationsText; 
 
     private async Task SearchReservations()
     {
         foundReservations = reservationManager.FindReservations(reservationCodeSearch, airlineSearch, nameSearch);
+        reservationsText = string.Join(Environment.NewLine, foundReservations.Select(r => r.ToString()));
     }
 
     private void SelectReservation(Reservation reservation)
     {
         selectedReservation = reservation;
+
+        // Readonly field
         reservationCodeUpdate = reservation.ReservationCode;
         flightCodeUpdate = reservation.FlightCode;
         airlineUpdate = reservation.Airline;
-        costUpdate = reservation.Cost;
+        costUpdate = reservation.Cost.ToString(); 
+
+        // Editable field
         nameUpdate = reservation.Name;
         citizenshipUpdate = reservation.Citizenship;
         statusUpdate = reservation.Status;
@@ -217,6 +228,9 @@ h2 {
 
             reservationManager.UpdateReservation(selectedReservation);
             reservationManager.Persist();
+
+            //refresh list
+            SearchReservations();
         }
     }
 
