@@ -27,25 +27,31 @@
 
 <div class="flex-container">
     <h2>Reservations</h2>
-    @if (foundReservations.Any())
+    @if (searchPerformed)
     {
-        <table class="table">
-            <tbody>
-                @foreach (var reservation in foundReservations)
-                {
-                    <tr>
-                        <td>@reservation.ToString()</td>
-                        <td>
-                            <button class="save" @onclick="() => SelectReservation(reservation)">Select</button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-    else
+        @if (foundReservations.Any())
+        {
+            <table class="table">
+                <tbody>
+                    @foreach (var reservation in foundReservations)
+                    {
+                        <tr>
+                            <td>@reservation.ToString()</td>
+                            <td>
+                                <button class="save" @onclick="() => SelectReservation(reservation)">Select</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <textarea class="input-field" readonly rows=1>No reservations found.</textarea>
+        }
+    } else
     {
-        <p>No reservations found.</p>
+        <textarea class="input-field" @bind="reservationsText" readonly rows=1></textarea>
     }
 </div>
 
@@ -187,6 +193,7 @@ h2 {
     private string airlineSearch;
     private string nameSearch;
     private string statusUpdate;
+    private bool searchPerformed = false;
 
     private string reservationCodeUpdate;
     private string flightCodeUpdate;
@@ -194,12 +201,14 @@ h2 {
     private string costUpdate;
     private string nameUpdate;
     private string citizenshipUpdate;
-    private string reservationsText; 
+    private string reservationsText = "Please perform a search to see reservations.";
 
     private async Task SearchReservations()
     {
         foundReservations = reservationManager.FindReservations(reservationCodeSearch, airlineSearch, nameSearch);
         reservationsText = string.Join(Environment.NewLine, foundReservations.Select(r => r.ToString()));
+
+        searchPerformed = true;
     }
 
     private void SelectReservation(Reservation reservation)
