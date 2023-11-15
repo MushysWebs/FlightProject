@@ -235,7 +235,6 @@ h2 {
 
     private async Task SearchReservations()                 @*Searches for reservations based on the input criteria*@
     {
-        // Calls the manager to find reservations and updates the list
         var allReservations = reservationManager.FindReservations(reservationCodeSearch, airlineSearch, nameSearch);
 
         // Filter for only Active reservations

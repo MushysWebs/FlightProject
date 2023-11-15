@@ -18,75 +18,74 @@
 @using System.Text.Json;
 @using Microsoft.Extensions.Logging
 
-<!--Flight finder section-->
-<h2>Flight Finder</h2>
+<h4>Flight Finder</h4>
 
 <div class="flex-container">            @* Input section for searching flights *@
 
     <div class="input-group">
         <label for="from">From:</label>
-        <input class="input-field" @bind="from" />
+        <input class="input-field"      @bind="from" />
     </div>
 
     <div class="input-group">
         <label for="to">To:</label>
-        <input class="input-field" @bind="to" />
+        <input class="input-field"      @bind="to" />
     </div>
 
     <div class="input-group">
         <label for="day">Day:</label>
-        <input class="input-field" @bind="day" />
+        <input class="input-field"      @bind="day" />
     </div>
                                         @* Search button triggers the SearchFlights method *@
-    <button type="submit" class="btn" @onclick="SearchFlights">Find flights</button>
+    <button type="submit" class="btn"   @onclick="SearchFlights">Find flights</button>
 </div>
 
                                         @* Displays the list of flights based on the search criteria *@
-<div class="flex-container">
-    <h2>Flights</h2>
-    <textarea class="input-field" readonly>@flightsText</textarea>
+<div class="input-row">
+    <h4 class="midheading">Flights</h4>
+    <textarea class="input-field" readonly rows=1>@flightsText</textarea>
 </div>
 
                                         @* Reservation section where users can reserve flights and input passenger details *@
 <div class="input-row">
-    <h2>Reserve</h2>
+    <h4 class="botheading">Reserve</h4>
                                         @* Non editable inputs for displaying selected flight information *@
     <div class="input-group">
         <label for="reserveFlightCode">Flight code:</label>
-        <input class="input-field" @bind="reserveFlightCode" readonly />
+        <input class="input-field"      @bind="reserveFlightCode" readonly />
     </div>
 
     <div class="input-group">
         <label for="reserveAirline">Airline:</label>
-        <input class="input-field" @bind="reserveAirline" readonly />
+        <input class="input-field"      @bind="reserveAirline" readonly />
     </div>
 
     <div class="input-group">
         <label for="reserveDay">Day:</label>
-        <input class="input-field" @bind="reserveDay" readonly />
+        <input class="input-field"      @bind="reserveDay" readonly />
     </div>
 
     <div class="input-group">
         <label for="reserveTime">Time:</label>
-        <input class="input-field" @bind="reserveTime" readonly />
+        <input class="input-field"      @bind="reserveTime" readonly />
     </div>
 
     <div class="input-group">
         <label for="reserveCost">Cost:</label>
-        <input class="input-field" @bind="reserveCost" readonly />
+        <input class="input-field"      @bind="reserveCost" readonly />
     </div>
 
     <div class="input-group">           @* Editable inputs for inputting passenger info *@
         <label for="reserveName">Name:</label>
-        <input class="input-field" @bind="reserveName" />
+        <input class="input-field"      @bind="reserveName" />
     </div>
 
     <div class="input-group">
         <label for="reserveCost">Citizenship:</label>
-        <input class="input-field" @bind="reserveCitizenship" />
+        <input class="input-field"      @bind="reserveCitizenship" />
     </div>
                                         @* Button to submit the reservation *@
-    <button type="reserve" class="btn" @onclick="ReserveFlight">Reserve</button>
+    <button type="reserve" class="btnbot" @onclick="ReserveFlight">Reserve</button>
 
                                         @* Displays the reservation code or errors if unsuccesful*@
     <p>@reservedFlight</p>
@@ -100,8 +99,17 @@
         text-align: center;
     }
 
-    h2 {
+    h4 {
         text-align: center;
+    }
+
+    .midheading {
+        margin-top: 35px;
+    }
+
+    .botheading {
+        margin-top: 35px;
+        margin-bottom: -10px;
     }
 
     .flex-container {
@@ -113,20 +121,20 @@
     }
 
     .input-group {
-        margin-bottom: 10px;
+        margin-bottom: 3px;
         flex: 1;
         display: flex;
     }
 
     .input-field {
         border: 1px solid #CCCCCC;
-        border-radius: 5px;
     }
 
-    .input-field, .btn {
+    .input-field, .btn, .btnbot {
         width: 100%;
-        padding: 8px;
         box-sizing: border-box;
+        border-radius: 5px;
+        height: 35px;
     }
 
     .btn {
@@ -135,6 +143,20 @@
         color: white;
         border: none;
         cursor: pointer;
+        margin-top: 17px;
+    }
+
+    .btnbot {
+        display: flex;
+        align-content: center;
+        margin: 15px auto;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        cursor: pointer;
+        margin-top: 15px;
+        margin-bottom: 15px;
+        max-width: 275px;
     }
 
     .btn:hover {
@@ -144,7 +166,7 @@
 </style>
 
 
-@code {             
+@code {
     //Array to hold flight data from CSV                                                    
     private string[] flightsArray;
     //Instance of ReservationManager for reservation operations
@@ -159,7 +181,7 @@
     public string day { get; set; }
     public string flightsText { get; set; }
 
-    public string reservedFlight { get; set; }
+    public string reservedFlight {get; set; }
     public string reserveFlightCode { get; set; }
     public string reserveAirline { get; set; }
     public string reserveDay { get; set; }
@@ -168,9 +190,11 @@
     public string reserveName { get; set; }
     public string reserveCitizenship { get; set; }
 
-    protected override async Task OnInitializedAsync()  @* Instantiate the reservation manager and load flights upon initialization *@
+    protected override async Task OnInitializedAsync()  
+    @* Instantiate the reservation manager and load flights upon initialization *@
     {                             
         reservationManager = new ReservationManager();
+        reservedFlight = "Reservation Code:";
         await LoadFlights();
     }
 
