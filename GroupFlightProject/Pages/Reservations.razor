@@ -37,7 +37,7 @@
 </div>
                                    @* Displays the selectable search results *@
 <div class="flex-container">
-    <h2>Reservations</h2>
+    <h2 class="reservations">Reservations</h2>
     @if (searchPerformed)
     {
         <!-- displays a list or a message based on search results -->
@@ -71,7 +71,7 @@
 
                                @*Allows editing and updating of a selected reservation *@
 <div class="flex-container">
-    <h2>Reserve</h2>
+    <h2 class="reserve">Reserve</h2>
 
     <div class="input-group">
         <label for="ReservationCodeUpdate">Reservation Code:</label>
@@ -139,7 +139,7 @@ h2 {
     display: flex;
     flex-direction: column; 
     align-items: stretch; 
-    gap: 20px;
+
 }
 
 .input-group {
@@ -185,15 +185,25 @@ h2 {
     color: white;
     border: none;
     cursor: pointer;
-    width: 200px;
+    width: 250px;
     margin: 0 auto; 
     border-radius: 5px;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .save:hover {
     background-color: #0056b3;
 }
 
+.reserve {
+    margin-top: 40px;
+}
+
+.reservations {
+    margin-top: 40px;
+    margin-bottom: 15px;
+}
 </style>
 
 
