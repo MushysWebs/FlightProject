@@ -1,17 +1,21 @@
 ﻿@*
-    Reservation UI Page - GroupFlightProject
-    Created by: Ricky To, Grady Spurrill, Logan Hoppen
-    This interface allows users to search for flight reservations, display results, and update reservation statuses. 
-    Users can input search criteria for reservation codes, airlines, and names which the system processes to output matching reservations.
-    Reservations set to inactive count as cancelling the flight and will no longer show up under reservations.          
-    The page is structured into search, results display, and reservation status update sections.
+    Names: Ricky To, Grady Spurril, Logan Hoppen
+    Date: November 14th 2023
+    Description:    This page is for searching and updating reservations in Traveless.
+                    It enables the user to input search criteria (code, airline, name)
+                    to locate matching reservations created by Flights.Razor
+                    The user can then select a reservation and view its details
+                    along with editing the name, citizenship, and reservation status.
+                    Marking a reservation as inactive cancels it and it is not displayed upon search.
+                    Once the changes are done the info persists back into the storage file.
+                    The output includes a list that updates based on search results and
+                    immediate feedback on updated reservations.
 *@
+
 @page "/reservations"
 
-
-<!--Search for reservation section-->
 <h2>Reservation Finder</h2>
-
+                                    @* Allows input of search criteria for finding reservations *@
 <div class="Reservations-finder">
 
     <div class="input-group">
@@ -30,13 +34,13 @@
     </div>
 
     <button class="btn" @onclick="SearchReservations">Find Reservations</button>
-
 </div>
-<!--Reservations results display section-->
+                                   @* Displays the selectable search results *@
 <div class="flex-container">
     <h2>Reservations</h2>
     @if (searchPerformed)
     {
+        <!-- displays a list or a message based on search results -->
         @if (foundReservations.Any())
         {
             <table class="table">
@@ -45,6 +49,8 @@
                     {
                         <tr>
                             <td>@reservation.ToString()</td>
+
+                            <!-- button that populates the field based on flight picked -->
                             <td>
                                 <button class="save" @onclick="() => SelectReservation(reservation)">Select</button>
                             </td>
@@ -62,7 +68,8 @@
         <textarea class="input-field" @bind="reservationsText" readonly rows=1></textarea>
     }
 </div>
-<!--Updating reservation section-->
+
+                               @*Allows editing and updating of a selected reservation *@
 <div class="flex-container">
     <h2>Reserve</h2>
 
@@ -172,58 +179,60 @@ h2 {
     align-items: center; 
 }
 
-    .save {
-        padding: 10px 20px;
-        background-color: #007BFF;
-        color: white;
-        border: none;
-        cursor: pointer;
-        width: 200px;
-        margin: 0 auto; 
-        border-radius: 5px;
-    }
+.save {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 200px;
+    margin: 0 auto; 
+    border-radius: 5px;
+}
 
-    .save:hover {
-        background-color: #0056b3;
-    }
+.save:hover {
+    background-color: #0056b3;
+}
 
 </style>
 
 
 @code {
-    //Reservation variables
+    //Manages reservation data
     private ReservationManager reservationManager = new ReservationManager();
+    //Stores the list of found reservations
     private List<Reservation> foundReservations = new List<Reservation>();
+    //Holds the currently selected reservation for editing
     private Reservation selectedReservation;
+
+    //Input fields for the search criteria
     private string reservationCodeSearch;
     private string airlineSearch;
     private string nameSearch;
-    private string statusUpdate;
     private bool searchPerformed = false;
 
+    //Fields for updating the displayed reservation details
     private string reservationCodeUpdate;
     private string flightCodeUpdate;
     private string airlineUpdate;
     private string costUpdate;
     private string nameUpdate;
     private string citizenshipUpdate;
+    private string statusUpdate;
+
+    //Placeholder text for the reservation
     private string reservationsText = "Please perform a search to see reservations.";
 
-    //Method to search for reservations 
-    private async Task SearchReservations()
+    private async Task SearchReservations()                 @*Searches for reservations based on the input criteria*@
     {
-        var allReservations = reservationManager.FindReservations(reservationCodeSearch, airlineSearch, nameSearch);
-
-        // Filter for only Active reservations
-        foundReservations = allReservations.Where(r => r.Status == "Active").ToList();
-
+        // Calls the manager to find reservations and updates the list
+        foundReservations = reservationManager.FindReservations(reservationCodeSearch, airlineSearch, nameSearch);
         reservationsText = string.Join(Environment.NewLine, foundReservations.Select(r => r.ToString()));
 
         searchPerformed = true;
     }
-
-    //Readability and editing reservations
-    private void SelectReservation(Reservation reservation)
+                                                       
+    private void SelectReservation(Reservation reservation)  @*Selects a reservation for editing and binds its details*@
     {
         selectedReservation = reservation;
 
@@ -239,8 +248,7 @@ h2 {
         statusUpdate = reservation.Status;
     }
 
-    //Update reservation and save changes
-    private void UpdateReservation()
+    private void UpdateReservation()                        @*Updates the selected reservation with the new details*@
     {
         if (selectedReservation != null)
         {
@@ -248,10 +256,9 @@ h2 {
             selectedReservation.Citizenship = citizenshipUpdate;
             selectedReservation.Status = statusUpdate;
 
+            // Persists the changes to the reservation manager and refreshes the list
             reservationManager.UpdateReservation(selectedReservation);
             reservationManager.Persist();
-
-            //refresh list
             SearchReservations();
         }
     }
