@@ -226,7 +226,10 @@ h2 {
     private async Task SearchReservations()                 @*Searches for reservations based on the input criteria*@
     {
         // Calls the manager to find reservations and updates the list
-        foundReservations = reservationManager.FindReservations(reservationCodeSearch, airlineSearch, nameSearch);
+        var allReservations = reservationManager.FindReservations(reservationCodeSearch, airlineSearch, nameSearch);
+
+        // Filter for only Active reservations
+        foundReservations = allReservations.Where(r => r.Status == "Active").ToList();
         reservationsText = string.Join(Environment.NewLine, foundReservations.Select(r => r.ToString()));
 
         searchPerformed = true;
