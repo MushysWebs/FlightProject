@@ -35,7 +35,6 @@
 
     <button class="btn" @onclick="SearchReservations">Find Reservations</button>
 </div>
-
                                    @* Displays the selectable search results *@
 <div class="flex-container">
     <h2>Reservations</h2>
@@ -116,6 +115,7 @@
 
 </div>
 
+<!--Styling for the reservation page below-->
 <style>
 * {
     box-sizing: border-box;
@@ -145,7 +145,6 @@ h2 {
 .input-group {
     display: flex;
     flex-direction: column;
-    margin-bottom: 10px;
 }
 
 .input-field {
@@ -232,7 +231,6 @@ h2 {
 
         searchPerformed = true;
     }
-
                                                        
     private void SelectReservation(Reservation reservation)  @*Selects a reservation for editing and binds its details*@
     {
