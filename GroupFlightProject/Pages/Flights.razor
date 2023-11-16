@@ -88,9 +88,9 @@
     <button class="reserve" @onclick="ReserveFlight">Reserve</button>
 
                                         @* Displays the reservation code or errors if unsuccesful*@
-    <div class="flex-container">
-        <p>@reservedFlight</p>
-    </div>
+
+    <p>@reservedFlight</p>
+
 </div>
 
 <!--Styling for the flight finder page-->
@@ -100,6 +100,8 @@
         display: flex;
         margin: 30px;
         text-align: center;
+        justify-content: center;
+        align-items: center;
     }
 
     h4 {
